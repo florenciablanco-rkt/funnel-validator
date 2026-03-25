@@ -34,7 +34,6 @@
     overflow-x: hidden;
   }
 
-  /* Background grid */
   body::before {
     content: '';
     position: fixed;
@@ -55,7 +54,6 @@
     z-index: 1;
   }
 
-  /* Header */
   header {
     padding: 32px 0 24px;
     border-bottom: 1px solid var(--border);
@@ -102,7 +100,6 @@
     border-radius: 20px;
   }
 
-  /* Upload zone */
   .upload-section {
     padding: 48px 0 32px;
   }
@@ -173,66 +170,6 @@
     border: 1px solid var(--border);
   }
 
-  /* Config panel */
-  .config-panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  .config-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-  }
-
-  .config-card h3 {
-    font-size: 13px;
-    font-family: var(--font-mono);
-    color: var(--accent);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-
-  .config-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-
-  .config-row label {
-    font-size: 13px;
-    color: var(--muted);
-    min-width: 180px;
-  }
-
-  .config-row input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px 12px;
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    width: 100px;
-  }
-
-  .config-row input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-
-  .config-row input.updated {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(0,229,160,0.15);
-    transition: box-shadow 0.3s, border-color 0.3s;
-  }
-
-  /* Progress / loading */
   .loading-bar {
     height: 3px;
     background: var(--border);
@@ -257,7 +194,6 @@
     100% { width: 100%; }
   }
 
-  /* Stats bar */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -313,7 +249,6 @@
     color: var(--muted);
   }
 
-  /* Buttons */
   .btn {
     padding: 10px 20px;
     border-radius: 8px;
@@ -326,28 +261,12 @@
     letter-spacing: 0.3px;
   }
 
-  .btn-primary {
-    background: var(--accent);
-    color: #000;
-  }
-
+  .btn-primary { background: var(--accent); color: #000; }
   .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
-
-  .btn-ghost {
-    background: transparent;
-    color: var(--muted);
-    border: 1px solid var(--border);
-  }
-
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
   .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+  .btn-danger { background: rgba(255,77,109,0.15); color: var(--invalid); border: 1px solid rgba(255,77,109,0.3); }
 
-  .btn-danger {
-    background: rgba(255,77,109,0.15);
-    color: var(--invalid);
-    border: 1px solid rgba(255,77,109,0.3);
-  }
-
-  /* Table section */
   .results-header {
     display: flex;
     align-items: center;
@@ -357,15 +276,9 @@
     flex-wrap: wrap;
   }
 
-  .results-title {
-    font-size: 16px;
-    font-weight: 700;
-  }
+  .results-title { font-size: 16px; font-weight: 700; }
 
-  .filter-tabs {
-    display: flex;
-    gap: 6px;
-  }
+  .filter-tabs { display: flex; gap: 6px; }
 
   .tab {
     padding: 6px 14px;
@@ -385,7 +298,6 @@
   .tab.warn-tab.active { background: var(--warn); color: #000; border-color: var(--warn); }
   .tab.danger-tab.active { background: var(--invalid); color: #fff; border-color: var(--invalid); }
 
-  /* Table */
   .table-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -399,17 +311,9 @@
     overflow-y: auto;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
 
-  thead {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-  }
+  thead { position: sticky; top: 0; z-index: 2; }
 
   th {
     background: var(--surface2);
@@ -433,10 +337,6 @@
     white-space: nowrap;
   }
 
-  tr:last-child td { border-bottom: none; }
-
-  tr:hover td { background: rgba(255,255,255,0.02); }
-
   .badge {
     display: inline-flex;
     align-items: center;
@@ -452,50 +352,20 @@
   .badge-invalid { background: rgba(255,77,109,0.12); color: var(--invalid); }
   .badge-warn { background: rgba(255,209,102,0.12); color: var(--warn); }
 
-  .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
+  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
   .dot-valid { background: var(--valid); }
   .dot-invalid { background: var(--invalid); }
   .dot-warn { background: var(--warn); }
 
-  /* Issues list within row */
-  .issues-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .issue-item {
-    font-size: 11px;
-    color: var(--warn);
-  }
-
+  .issues-list { display: flex; flex-direction: column; gap: 2px; }
+  .issue-item { font-size: 11px; color: var(--warn); }
   .issue-item.error { color: var(--invalid); }
 
-  /* Empty state */
-  .empty {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--muted);
-  }
-
+  .empty { text-align: center; padding: 80px 20px; color: var(--muted); }
   .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
-  .empty h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-  .empty p { font-size: 14px; }
 
-  /* Export button */
-  .export-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 16px;
-  }
+  .export-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
 
-  /* Pagination */
   .pagination {
     display: flex;
     align-items: center;
@@ -520,17 +390,9 @@
     justify-content: center;
   }
 
-  .page-btn:hover { border-color: var(--text); color: var(--text); }
   .page-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
   .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  .page-info {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  /* Footer */
   footer {
     padding: 32px 0;
     text-align: center;
@@ -541,24 +403,8 @@
     margin-top: 48px;
   }
 
-  /* Tooltip for issues */
-  .issue-tooltip {
-    font-size: 11px;
-    color: var(--invalid);
-    max-width: 300px;
-    line-height: 1.6;
-  }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    .stats-grid { grid-template-columns: repeat(3, 1fr); }
-    .config-panel { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 600px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .container { padding: 0 16px; }
-    .upload-zone { padding: 32px 16px; }
-  }
+  @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
 <body>
@@ -583,29 +429,11 @@
     </div>
   </div>
 
-  <div class="config-panel" id="configPanel" style="display:none">
-    <div class="config-card">
-      <h3>⏱ Umbrales Temporales</h3>
-      <div class="config-row">
-        <label>Mínimo entre pasos (seg)</label>
-        <input type="number" id="minSeconds" value="30" min="1" />
-      </div>
-      <div class="config-row">
-        <label>Máximo entre pasos (días)</label>
-        <input type="number" id="maxDays" value="3" min="1" />
-      </div>
-    </div>
-    <div class="config-card">
-      <h3>📍 Verosimilitud Geográfica</h3>
-      <div class="config-row">
-        <label>Tiempo mínimo de viaje inter-ciudad (min)</label>
-        <input type="number" id="minCityTravel" value="60" min="1" />
-      </div>
-      <div class="config-row">
-        <label>Tiempo mínimo de viaje inter-depto (min)</label>
-        <input type="number" id="minStateTravel" value="120" min="1" />
-      </div>
-    </div>
+  <div id="configPanel" style="display:none">
+    <input type="hidden" id="minSeconds" value="0" />
+    <input type="hidden" id="maxDays" value="365" />
+    <input type="hidden" id="minCityTravel" value="60" />
+    <input type="hidden" id="minStateTravel" value="120" />
   </div>
 
   <div class="loading-bar" id="loadingBar"><div class="loading-bar-fill"></div></div>
@@ -630,12 +458,12 @@
       <div class="stat-card suspicious">
         <div class="stat-label">Sospechosos</div>
         <div class="stat-value" id="statSuspicious">0</div>
-        <div class="stat-sub">problemas de timing/geo</div>
+        <div class="stat-sub">Problema geográfico</div>
       </div>
       <div class="stat-card clean">
         <div class="stat-label">✅ Facturables</div>
         <div class="stat-value" id="statClean">0</div>
-        <div class="stat-sub" id="statCleanSub">pasos + verosimilitud OK</div>
+        <div class="stat-sub" id="statCleanSub">pasos + geo OK</div>
       </div>
     </div>
 
@@ -644,8 +472,8 @@
       <div class="filter-tabs">
         <button class="tab active" onclick="setFilter('all', this)">Todos</button>
         <button class="tab" onclick="setFilter('clean', this)">✅ Facturables</button>
-        <button class="tab warn-tab" onclick="setFilter('suspicious', this)">⚠ Sospechosos</button>
-        <button class="tab danger-tab" onclick="setFilter('invalid', this)">✗ Inválidos</button>
+        <button class="tab warn-tab" onclick="setFilter('suspicious', this)">📍 Geo Sospechoso</button>
+        <button class="tab danger-tab" onclick="setFilter('invalid', this)">✗ Pasos Inválidos</button>
       </div>
     </div>
 
@@ -659,7 +487,7 @@
               <th>Pasos registrados</th>
               <th>Tiempo total</th>
               <th>Ciudades recorridas</th>
-              <th>Problemas detectados</th>
+              <th>Alertas Geográficas</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -688,7 +516,6 @@
 </footer>
 
 <script>
-// ── CONSTANTS ──────────────────────────────────────────────────────────────────
 const STEPS = [
   'af_apertura_cuenta_en_linea_no_cliente-app_page_visit',
   'af_apertura_cuenta_en_linea_no_cliente-app_step_5',
@@ -696,16 +523,13 @@ const STEPS = [
 ];
 const FINAL_EVENT = STEPS[2];
 
-// ── STATE ──────────────────────────────────────────────────────────────────────
 let allResults = [];
 let filteredResults = [];
 let currentFilter = 'all';
 let currentPage = 1;
 const PAGE_SIZE = 50;
-let rawParsedRows = [];   // stored so config changes can re-analyze without re-upload
-let reanalyzeTimer = null;
+let rawParsedRows = [];
 
-// ── UPLOAD ─────────────────────────────────────────────────────────────────────
 const uploadZone = document.getElementById('uploadZone');
 const csvInput = document.getElementById('csvInput');
 
@@ -719,22 +543,7 @@ uploadZone.addEventListener('drop', e => {
 });
 csvInput.addEventListener('change', e => { if (e.target.files[0]) processFile(e.target.files[0]); });
 
-// ── REACTIVE CONFIG — re-analyze on any input change ──────────────────────────
-['minSeconds','maxDays','minCityTravel','minStateTravel'].forEach(id => {
-  const el = document.getElementById(id);
-  el.addEventListener('input', () => {
-    if (!rawParsedRows.length) return;
-    el.classList.add('updated');
-    clearTimeout(reanalyzeTimer);
-    reanalyzeTimer = setTimeout(() => {
-      el.classList.remove('updated');
-      analyze(rawParsedRows);
-    }, 600);
-  });
-});
-
 function processFile(file) {
-  document.getElementById('configPanel').style.display = 'grid';
   document.getElementById('loadingBar').classList.add('active');
   document.getElementById('statsSection').style.display = 'none';
   document.getElementById('emptyState').style.display = 'none';
@@ -749,18 +558,17 @@ function processFile(file) {
     },
     error: () => {
       document.getElementById('loadingBar').classList.remove('active');
-      alert('Error al leer el archivo CSV. Verificá el formato.');
+      alert('Error al leer el archivo CSV.');
     }
   });
 }
 
-// ── ANALYSIS ───────────────────────────────────────────────────────────────────
 function getConfig() {
   return {
-    minSeconds: parseInt(document.getElementById('minSeconds').value) || 30,
-    maxDays: parseInt(document.getElementById('maxDays').value) || 3,
-    minCityTravel: (parseInt(document.getElementById('minCityTravel').value) || 60) * 60,   // to seconds
-    minStateTravel: (parseInt(document.getElementById('minStateTravel').value) || 120) * 60  // to seconds
+    minSeconds: 0, 
+    maxDays: 365,
+    minCityTravel: 60 * 60,   // 60 min
+    minStateTravel: 120 * 60  // 120 min
   };
 }
 
@@ -785,8 +593,6 @@ function parseDate(str) {
 
 function analyze(rows) {
   const cfg = getConfig();
-
-  // Group by AppsFlyer ID
   const byId = {};
   for (const row of rows) {
     const id = findCol(row, 'AppsFlyer ID', 'appsflyer_id', 'appsflyer id') || '';
@@ -797,25 +603,20 @@ function analyze(rows) {
       event: event.trim(),
       time: parseDate(findCol(row, 'Event Time', 'event_time', 'eventtime')),
       city: (findCol(row, 'City', 'city') || '').trim().toLowerCase(),
-      state: (findCol(row, 'State', 'state') || '').trim().toLowerCase(),
-      ip: findCol(row, 'IP', 'ip') || ''
+      state: (findCol(row, 'State', 'state') || '').trim().toLowerCase()
     });
   }
 
-  // Filter only IDs that reached FINAL_EVENT
   const results = [];
   for (const [id, events] of Object.entries(byId)) {
-    const hasFinal = events.some(e => e.event === FINAL_EVENT);
-    if (!hasFinal) continue;
-
-    results.push(validateId(id, events, cfg));
+    if (events.some(e => e.event === FINAL_EVENT)) {
+      results.push(validateId(id, events, cfg));
+    }
   }
 
   allResults = results;
-
   if (results.length === 0) {
     document.getElementById('emptyState').style.display = 'block';
-    document.getElementById('statsSection').style.display = 'none';
     return;
   }
 
@@ -826,115 +627,53 @@ function analyze(rows) {
 
 function validateId(id, events, cfg) {
   const issues = [];
-  let missingSteps = [];
-  let timingIssues = [];
-  let geoIssues = [];
-
-  // ── 1. Check step presence ──
   const registeredSteps = STEPS.filter(s => events.some(e => e.event === s));
-  missingSteps = STEPS.slice(0, -1).filter(s => !registeredSteps.includes(s));
+  const missingSteps = STEPS.slice(0, -1).filter(s => !registeredSteps.includes(s));
 
   if (missingSteps.length > 0) {
-    missingSteps.forEach(s => {
-      const label = s.split('-app_')[1] || s;
-      issues.push({ type: 'error', msg: `Falta paso: ${label}` });
-    });
+    missingSteps.forEach(s => issues.push({ type: 'error', msg: `Falta paso: ${s.split('-app_')[1]}` }));
   }
 
-  // ── 2. Get ordered events for timing/geo ──
   const funnelEvents = STEPS
     .map(s => events.filter(e => e.event === s).sort((a, b) => (a.time || 0) - (b.time || 0))[0])
     .filter(Boolean);
 
-  // ── 3. Check timing ──
   for (let i = 1; i < funnelEvents.length; i++) {
     const prev = funnelEvents[i - 1];
     const curr = funnelEvents[i];
     if (!prev.time || !curr.time) continue;
-
     const diffSec = (curr.time - prev.time) / 1000;
-    const stepLabel = `${shortLabel(STEPS[i-1])} → ${shortLabel(STEPS[i])}`;
 
-    if (diffSec < 0) {
-      timingIssues.push({ msg: `⚡ Orden inverso en: ${stepLabel}` });
-    } else if (diffSec < cfg.minSeconds) {
-      timingIssues.push({ msg: `⚡ Demasiado rápido (${Math.round(diffSec)}s) en: ${stepLabel}` });
-    } else if (diffSec > cfg.maxDays * 86400) {
-      timingIssues.push({ msg: `🐢 Demasiado lento (${Math.round(diffSec/86400)}d) en: ${stepLabel}` });
+    if (prev.city && curr.city && prev.city !== curr.city && diffSec < cfg.minCityTravel) {
+      issues.push({ type: 'warn', msg: `📍 Ciudad imposible: ${titleCase(prev.city)} → ${titleCase(curr.city)} (${Math.round(diffSec/60)}min)` });
     }
-
-    // ── 4. Check geo ──
-    if (prev.city && curr.city && prev.city !== curr.city) {
-      if (diffSec < cfg.minCityTravel) {
-        geoIssues.push({ msg: `📍 Cambio de ciudad imposible: ${titleCase(prev.city)} → ${titleCase(curr.city)} en ${Math.round(diffSec/60)}min` });
-      }
-    }
-    if (prev.state && curr.state && prev.state !== curr.state) {
-      if (diffSec < cfg.minStateTravel) {
-        geoIssues.push({ msg: `🗺 Cambio de depto/estado imposible: ${titleCase(prev.state)} → ${titleCase(curr.state)} en ${Math.round(diffSec/60)}min` });
-      }
+    if (prev.state && curr.state && prev.state !== curr.state && diffSec < cfg.minStateTravel) {
+      issues.push({ type: 'warn', msg: `🗺 Depto imposible: ${titleCase(prev.state)} → ${titleCase(curr.state)} (${Math.round(diffSec/60)}min)` });
     }
   }
 
-  timingIssues.forEach(i => issues.push({ type: 'warn', msg: i.msg }));
-  geoIssues.forEach(i => issues.push({ type: 'warn', msg: i.msg }));
-
-  // ── Status ──
   const hasErrors = issues.some(i => i.type === 'error');
   const hasWarns = issues.some(i => i.type === 'warn');
-  let status = 'clean';
-  if (hasErrors) status = 'invalid';
-  else if (hasWarns) status = 'suspicious';
+  const status = hasErrors ? 'invalid' : (hasWarns ? 'suspicious' : 'clean');
+  const totalMs = funnelEvents.length >= 2 ? (funnelEvents[funnelEvents.length-1].time - funnelEvents[0].time) : null;
 
-  // ── Build timeline ──
-  const times = funnelEvents.filter(e => e.time);
-  const totalMs = times.length >= 2 ? (times[times.length - 1].time - times[0].time) : null;
-
-  const cities = [...new Set(funnelEvents.map(e => e.city).filter(Boolean))];
-
-  return {
-    id,
-    status,
-    registeredSteps,
-    missingSteps,
-    issues,
-    totalMs,
-    cities
-  };
+  return { id, status, registeredSteps, missingSteps, issues, totalMs, cities: [...new Set(funnelEvents.map(e => e.city).filter(Boolean))] };
 }
 
-function shortLabel(step) {
-  return step.split('-app_')[1] || step.slice(-20);
-}
+function titleCase(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
 
-function titleCase(s) {
-  return s.replace(/\b\w/g, c => c.toUpperCase());
-}
-
-// ── STATS ──────────────────────────────────────────────────────────────────────
 function updateStats(results) {
-  const total = results.length;
-  const validSteps = results.filter(r => r.missingSteps.length === 0).length;
-  const invalidSteps = results.filter(r => r.missingSteps.length > 0).length;
-  const suspicious = results.filter(r => r.status === 'suspicious').length;
-  const clean = results.filter(r => r.status === 'clean').length;
-  const billable = clean + suspicious; // sospechosos se facturan pero se marcan
-
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statValidSteps').textContent = validSteps;
-  document.getElementById('statInvalidSteps').textContent = invalidSteps;
-  document.getElementById('statSuspicious').textContent = suspicious;
+  document.getElementById('statTotal').textContent = results.length;
+  document.getElementById('statValidSteps').textContent = results.filter(r => r.missingSteps.length === 0).length;
+  document.getElementById('statInvalidSteps').textContent = results.filter(r => r.missingSteps.length > 0).length;
+  document.getElementById('statSuspicious').textContent = results.filter(r => r.status === 'suspicious').length;
+  const billable = results.filter(r => r.status === 'clean' || r.status === 'suspicious').length;
   document.getElementById('statClean').textContent = billable;
-  document.getElementById('statCleanSub').textContent =
-    suspicious > 0 ? `${clean} limpios + ${suspicious} sospechosos` : 'todos limpios';
 }
 
-// ── FILTER & RENDER ────────────────────────────────────────────────────────────
 function setFilter(filter, btn, force = false) {
-  if (filter === currentFilter && !force) return;
   currentFilter = filter;
   currentPage = 1;
-
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   if (btn) btn.classList.add('active');
 
@@ -942,122 +681,60 @@ function setFilter(filter, btn, force = false) {
   else if (filter === 'clean') filteredResults = allResults.filter(r => r.status === 'clean' || r.status === 'suspicious');
   else if (filter === 'suspicious') filteredResults = allResults.filter(r => r.status === 'suspicious');
   else if (filter === 'invalid') filteredResults = allResults.filter(r => r.status === 'invalid');
-
   renderTable();
 }
 
 function renderTable() {
   const tbody = document.getElementById('tableBody');
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const page = filteredResults.slice(start, start + PAGE_SIZE);
+  const page = filteredResults.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   tbody.innerHTML = page.map(r => {
     const badgeClass = r.status === 'clean' ? 'badge-valid' : r.status === 'suspicious' ? 'badge-warn' : 'badge-invalid';
-    const badgeIcon = r.status === 'clean' ? '✓' : r.status === 'suspicious' ? '⚠' : '✗';
     const badgeText = r.status === 'clean' ? 'Facturable' : r.status === 'suspicious' ? 'Sospechoso' : 'Inválido';
-
-    const stepsHtml = STEPS.map((s, i) => {
-      const label = shortLabel(s);
-      const done = r.registeredSteps.includes(s);
-      const icon = done ? '✓' : '✗';
-      const color = done ? 'var(--valid)' : 'var(--invalid)';
-      return `<span style="color:${color};margin-right:8px">${icon} ${label}</span>`;
-    }).join('');
-
-    const totalTime = r.totalMs !== null
-      ? formatDuration(r.totalMs)
-      : '—';
-
-    const citiesStr = r.cities.length > 0
-      ? r.cities.map(titleCase).join(' → ')
-      : '—';
-
-    const issuesHtml = r.issues.length === 0
-      ? '<span style="color:var(--valid);font-size:11px">Sin problemas</span>'
-      : r.issues.map(i => `<div class="issue-item ${i.type === 'error' ? 'error' : ''}">${i.msg}</div>`).join('');
-
+    
     return `<tr>
       <td style="color:var(--text);font-weight:500">${r.id}</td>
-      <td><span class="badge ${badgeClass}"><span class="dot dot-${r.status === 'clean' ? 'valid' : r.status === 'suspicious' ? 'warn' : 'invalid'}"></span>${badgeText}</span></td>
-      <td style="max-width:320px;white-space:normal;font-size:11px">${stepsHtml}</td>
-      <td>${totalTime}</td>
-      <td style="max-width:200px;white-space:normal;font-size:11px">${citiesStr}</td>
-      <td style="max-width:280px;white-space:normal"><div class="issues-list">${issuesHtml}</div></td>
+      <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+      <td style="font-size:11px">${STEPS.map(s => `<span style="color:${r.registeredSteps.includes(s)?'var(--valid)':'var(--invalid)'}">${r.registeredSteps.includes(s)?'✓':'✗'} ${s.split('-app_')[1]}</span>`).join(' ')}</td>
+      <td>${r.totalMs ? formatDuration(r.totalMs) : '—'}</td>
+      <td style="font-size:11px">${r.cities.map(titleCase).join(' → ') || '—'}</td>
+      <td><div class="issues-list">${r.issues.map(i => `<div class="issue-item ${i.type === 'error' ? 'error' : ''}">${i.msg}</div>`).join('') || '<span style="color:var(--valid)">OK</span>'}</div></td>
     </tr>`;
   }).join('');
-
   renderPagination();
 }
 
 function formatDuration(ms) {
   const s = Math.floor(ms / 1000);
   if (s < 60) return `${s}s`;
-  if (s < 3600) return `${Math.floor(s/60)}m ${s%60}s`;
-  const h = Math.floor(s/3600);
-  const m = Math.floor((s%3600)/60);
-  if (h < 24) return `${h}h ${m}m`;
-  return `${Math.floor(h/24)}d ${h%24}h`;
+  const m = Math.floor(s/60);
+  if (m < 60) return `${m}m ${s%60}s`;
+  return `${Math.floor(m/60)}h ${m%60}m`;
 }
 
 function renderPagination() {
-  const total = filteredResults.length;
-  const pages = Math.ceil(total / PAGE_SIZE);
-  const wrap = document.getElementById('paginationWrap');
-
-  if (pages <= 1) { wrap.innerHTML = ''; return; }
-
-  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
-
-  for (let i = 1; i <= pages; i++) {
-    if (pages > 7 && Math.abs(i - currentPage) > 2 && i !== 1 && i !== pages) {
-      if (i === 2 || i === pages - 1) html += `<span class="page-info">…</span>`;
-      continue;
-    }
-    html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
-  }
-
-  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
-  html += `<span class="page-info" style="margin-left:8px">${total} resultados</span>`;
-  wrap.innerHTML = html;
-}
-
-function goPage(p) {
   const pages = Math.ceil(filteredResults.length / PAGE_SIZE);
-  if (p < 1 || p > pages) return;
-  currentPage = p;
-  renderTable();
+  const wrap = document.getElementById('paginationWrap');
+  if (pages <= 1) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>
+                    <span class="page-info">Página ${currentPage} de ${pages}</span>
+                    <button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
 }
 
-// ── EXPORT ─────────────────────────────────────────────────────────────────────
+function goPage(p) { currentPage = p; renderTable(); }
+
 function exportCSV(which) {
   let data = allResults;
   if (which === 'clean') data = allResults.filter(r => r.status === 'clean' || r.status === 'suspicious');
   if (which === 'invalid') data = allResults.filter(r => r.status === 'invalid');
-
-  const rows = [
-    ['AppsFlyer ID', 'Estado', 'Pasos Registrados', 'Pasos Faltantes', 'Tiempo Total', 'Ciudades', 'Problemas']
-  ];
-
-  for (const r of data) {
-    rows.push([
-      r.id,
-      r.status,
-      r.registeredSteps.map(s => shortLabel(s)).join(' | '),
-      r.missingSteps.map(s => shortLabel(s)).join(' | '),
-      r.totalMs !== null ? formatDuration(r.totalMs) : '',
-      r.cities.map(titleCase).join(' > '),
-      r.issues.map(i => i.msg).join(' | ')
-    ]);
-  }
-
-  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const rows = [['AppsFlyer ID', 'Estado', 'Ciudades', 'Problemas']];
+  data.forEach(r => rows.push([r.id, r.status, r.cities.join(' > '), r.issues.map(i => i.msg).join(' | ')]));
+  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `funnel_${which}.csv`;
   a.click();
-  URL.revokeObjectURL(url);
 }
 </script>
 </body>
