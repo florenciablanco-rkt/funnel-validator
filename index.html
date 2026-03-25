@@ -13,8 +13,6 @@
     --surface2: #1a1a24;
     --border: #2a2a3a;
     --accent: #00e5a0;
-    --accent2: #ff4d6d;
-    --accent3: #ffd166;
     --text: #e8e8f0;
     --muted: #666680;
     --valid: #00e5a0;
@@ -25,495 +23,148 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-display); min-height: 100vh; }
+  
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-display);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  /* HEADER */
+  header { padding: 32px 0 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #000; }
+  .logo h1 { font-size: 20px; font-weight: 800; }
+  .logo span { color: var(--accent); }
+  .header-badge { font-family: var(--font-mono); font-size: 11px; color: var(--muted); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+  /* UPLOAD - Único paso visible */
+  .upload-section { padding: 48px 0 32px; }
+  .upload-label { font-size: 11px; font-family: var(--font-mono); color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; display: block; }
+  .upload-zone { border: 2px dashed var(--border); border-radius: 16px; padding: 60px; text-align: center; cursor: pointer; background: var(--surface); transition: 0.2s; position: relative; }
+  .upload-zone:hover { border-color: var(--accent); background: rgba(0,229,160,0.04); }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .upload-icon { font-size: 40px; margin-bottom: 12px; }
+  .hint { margin-top: 20px; padding: 12px 20px; background: var(--surface2); border-radius: 8px; display: inline-block; font-family: var(--font-mono); font-size: 12px; color: var(--muted); border: 1px solid var(--border); }
 
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 32px;
-    position: relative;
-    z-index: 1;
-  }
-
-  header {
-    padding: 32px 0 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-icon {
-    width: 36px;
-    height: 36px;
-    background: var(--accent);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-
-  .logo h1 {
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
-
-  .logo span {
-    color: var(--accent);
-  }
-
-  .header-badge {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    padding: 4px 10px;
-    border-radius: 20px;
-  }
-
-  .upload-section {
-    padding: 48px 0 32px;
-  }
-
-  .upload-label {
-    font-size: 11px;
-    font-family: var(--font-mono);
-    color: var(--accent);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: 16px;
-    padding: 48px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-    background: var(--surface);
-  }
-
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--accent);
-    background: rgba(0,229,160,0.04);
-  }
-
-  .upload-zone input {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  .upload-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-    opacity: 0.6;
-  }
-
-  .upload-zone h2 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .upload-zone p {
-    color: var(--muted);
-    font-size: 14px;
-    font-family: var(--font-mono);
-  }
-
-  .upload-zone .hint {
-    margin-top: 20px;
-    padding: 12px 20px;
-    background: var(--surface2);
-    border-radius: 8px;
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--muted);
-    border: 1px solid var(--border);
-  }
-
-  .loading-bar {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 24px 0;
-    overflow: hidden;
-    display: none;
-  }
-
-  .loading-bar.active { display: block; }
-
-  .loading-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), #00bfff);
-    border-radius: 2px;
-    animation: loadingPulse 1.5s ease-in-out infinite;
-  }
-
-  @keyframes loadingPulse {
-    0% { width: 0%; }
-    50% { width: 80%; }
-    100% { width: 100%; }
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 32px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-
-  .stat-card.total::before { background: #666680; }
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: relative; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--muted); }
   .stat-card.valid::before { background: var(--valid); }
   .stat-card.invalid-steps::before { background: var(--invalid); }
   .stat-card.suspicious::before { background: var(--warn); }
   .stat-card.clean::before { background: var(--accent); }
-
-  .stat-label {
-    font-size: 11px;
-    font-family: var(--font-mono);
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-
-  .stat-value {
-    font-size: 36px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
+  .stat-label { font-size: 11px; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
   .stat-card.valid .stat-value { color: var(--valid); }
   .stat-card.invalid-steps .stat-value { color: var(--invalid); }
   .stat-card.suspicious .stat-value { color: var(--warn); }
   .stat-card.clean .stat-value { color: var(--accent); }
 
-  .stat-sub {
-    font-size: 12px;
-    color: var(--muted);
-  }
+  /* TABLE */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .table-scroll { overflow-x: auto; max-height: 500px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: var(--surface2); padding: 12px 16px; text-align: left; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: var(--font-mono); }
+  
+  .badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .badge-valid { background: rgba(0,229,160,0.1); color: var(--valid); }
+  .badge-warn { background: rgba(255,209,102,0.1); color: var(--warn); }
+  .badge-invalid { background: rgba(255,77,109,0.1); color: var(--invalid); }
 
-  .btn {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.15s;
-    letter-spacing: 0.3px;
-  }
-
-  .btn-primary { background: var(--accent); color: #000; }
-  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { border-color: var(--text); color: var(--text); }
-  .btn-danger { background: rgba(255,77,109,0.15); color: var(--invalid); border: 1px solid rgba(255,77,109,0.3); }
-
-  .results-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .results-title { font-size: 16px; font-weight: 700; }
-
-  .filter-tabs { display: flex; gap: 6px; }
-
-  .tab {
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-family: var(--font-mono);
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    transition: all 0.15s;
-    font-weight: 500;
-  }
-
-  .tab:hover { color: var(--text); border-color: var(--text); }
-  .tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
-  .tab.warn-tab.active { background: var(--warn); color: #000; border-color: var(--warn); }
-  .tab.danger-tab.active { background: var(--invalid); color: #fff; border-color: var(--invalid); }
-
-  .table-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .table-scroll {
-    overflow-x: auto;
-    max-height: 520px;
-    overflow-y: auto;
-  }
-
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-
-  thead { position: sticky; top: 0; z-index: 2; }
-
-  th {
-    background: var(--surface2);
-    padding: 12px 16px;
-    text-align: left;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 500;
-    white-space: nowrap;
-    border-bottom: 1px solid var(--border);
-  }
-
-  td {
-    padding: 11px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    font-family: var(--font-mono);
-  }
-
-  .badge-valid { background: rgba(0,229,160,0.12); color: var(--valid); }
-  .badge-invalid { background: rgba(255,77,109,0.12); color: var(--invalid); }
-  .badge-warn { background: rgba(255,209,102,0.12); color: var(--warn); }
-
-  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-  .dot-valid { background: var(--valid); }
-  .dot-invalid { background: var(--invalid); }
-  .dot-warn { background: var(--warn); }
-
-  .issues-list { display: flex; flex-direction: column; gap: 2px; }
-  .issue-item { font-size: 11px; color: var(--warn); }
+  .issue-item { font-size: 10px; margin-bottom: 2px; }
   .issue-item.error { color: var(--invalid); }
+  .issue-item.warn { color: var(--warn); }
 
-  .empty { text-align: center; padding: 80px 20px; color: var(--muted); }
-  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+  .btn { padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; font-family: var(--font-display); }
+  .btn-primary { background: var(--accent); color: #000; }
+  .export-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; padding-bottom: 40px; }
 
-  .export-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+  .loading-bar { height: 3px; background: var(--border); display: none; margin-bottom: 20px; }
+  .loading-bar.active { display: block; }
+  .loading-fill { height: 100%; background: var(--accent); width: 50%; animation: load 1s infinite alternate; }
+  @keyframes load { from { width: 10%; } to { width: 90%; } }
 
-  .pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px;
-    border-top: 1px solid var(--border);
-  }
-
-  .page-btn {
-    width: 32px; height: 32px;
-    border-radius: 6px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .page-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
-  .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-  footer {
-    padding: 32px 0;
-    text-align: center;
-    color: var(--muted);
-    font-size: 12px;
-    font-family: var(--font-mono);
-    border-top: 1px solid var(--border);
-    margin-top: 48px;
-  }
-
-  @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  .filter-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+  .tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
 </style>
 </head>
 <body>
-<div class="container">
 
+<div class="container">
   <header>
     <div class="logo">
       <div class="logo-icon">⚡</div>
       <h1>Funnel<span>Validator</span></h1>
     </div>
-    <div class="header-badge">AppsFlyer · Apertura de Cuenta</div>
+    <div class="header-badge">AppsFlyer Analytics</div>
   </header>
 
   <div class="upload-section">
-    <span class="upload-label">// Paso 1 — Cargar datos</span>
-    <div class="upload-zone" id="uploadZone">
+    <span class="upload-label">// Cargar archivo CSV</span>
+    <div class="upload-zone">
       <input type="file" accept=".csv" id="csvInput" />
       <div class="upload-icon">📂</div>
-      <h2>Arrastrá tu archivo CSV</h2>
-      <p>o hacé clic para seleccionarlo</p>
-      <div class="hint">Columnas requeridas: AppsFlyer ID · Event Name · Event Time · City · State</div>
+      <h2>Seleccionar reporte de AppsFlyer</h2>
+      <p>Arrastra aquí o haz clic para buscar</p>
+      <div class="hint">Requerido: AppsFlyer ID, Event Name, Event Time, City, State</div>
     </div>
   </div>
 
-  <div id="configPanel" style="display:none">
-    <input type="hidden" id="minSeconds" value="0" />
-    <input type="hidden" id="maxDays" value="365" />
-    <input type="hidden" id="minCityTravel" value="60" />
-    <input type="hidden" id="minStateTravel" value="120" />
-  </div>
+  <div class="loading-bar" id="loadingBar"><div class="loading-fill"></div></div>
 
-  <div class="loading-bar" id="loadingBar"><div class="loading-bar-fill"></div></div>
-
-  <div id="statsSection" style="display:none">
+  <div id="resultsSection" style="display:none">
     <div class="stats-grid">
-      <div class="stat-card total">
-        <div class="stat-label">Total IDs</div>
+      <div class="stat-card">
+        <div class="stat-label">Total Analizados</div>
         <div class="stat-value" id="statTotal">0</div>
-        <div class="stat-sub">con evento final</div>
       </div>
       <div class="stat-card valid">
-        <div class="stat-label">Paso completo</div>
-        <div class="stat-value" id="statValidSteps">0</div>
-        <div class="stat-sub">pasos OK</div>
+        <div class="stat-label">Funnel Completo</div>
+        <div class="stat-value" id="statValid">0</div>
       </div>
       <div class="stat-card invalid-steps">
-        <div class="stat-label">Pasos faltantes</div>
-        <div class="stat-value" id="statInvalidSteps">0</div>
-        <div class="stat-sub">saltearon pasos</div>
+        <div class="stat-label">Saltaron Pasos</div>
+        <div class="stat-value" id="statInvalid">0</div>
       </div>
       <div class="stat-card suspicious">
-        <div class="stat-label">Sospechosos</div>
-        <div class="stat-value" id="statSuspicious">0</div>
-        <div class="stat-sub">Problema geográfico</div>
+        <div class="stat-label">Geo-Sospechosos</div>
+        <div class="stat-value" id="statWarn">0</div>
       </div>
       <div class="stat-card clean">
         <div class="stat-label">✅ Facturables</div>
         <div class="stat-value" id="statClean">0</div>
-        <div class="stat-sub" id="statCleanSub">pasos + geo OK</div>
       </div>
     </div>
 
-    <div class="results-header">
-      <div class="results-title">Resultados por AppsFlyer ID</div>
-      <div class="filter-tabs">
-        <button class="tab active" onclick="setFilter('all', this)">Todos</button>
-        <button class="tab" onclick="setFilter('clean', this)">✅ Facturables</button>
-        <button class="tab warn-tab" onclick="setFilter('suspicious', this)">📍 Geo Sospechoso</button>
-        <button class="tab danger-tab" onclick="setFilter('invalid', this)">✗ Pasos Inválidos</button>
-      </div>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="setFilter('all', this)">Todos</button>
+      <button class="tab" onclick="setFilter('clean', this)">Facturables</button>
+      <button class="tab" onclick="setFilter('invalid', this)">Inválidos</button>
     </div>
 
     <div class="table-wrap">
       <div class="table-scroll">
-        <table id="resultsTable">
+        <table>
           <thead>
             <tr>
               <th>AppsFlyer ID</th>
               <th>Estado</th>
-              <th>Pasos registrados</th>
-              <th>Tiempo total</th>
-              <th>Ciudades recorridas</th>
-              <th>Alertas Geográficas</th>
+              <th>Pasos</th>
+              <th>Tiempo</th>
+              <th>Geografía (Alertas)</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
         </table>
       </div>
-      <div class="pagination" id="paginationWrap"></div>
     </div>
 
     <div class="export-row">
-      <button class="btn btn-ghost" onclick="exportCSV('all')">Exportar todos</button>
-      <button class="btn btn-danger" onclick="exportCSV('invalid')">Exportar inválidos</button>
-      <button class="btn btn-primary" onclick="exportCSV('clean')">Exportar facturables</button>
+      <button class="btn btn-primary" onclick="exportCSV()">Exportar Facturables (CSV)</button>
     </div>
   </div>
-
-  <div id="emptyState" style="display:none" class="empty">
-    <div class="empty-icon">🔍</div>
-    <h3>Sin resultados</h3>
-    <p>No se encontraron IDs con el evento de apertura de cuenta en este archivo.</p>
-  </div>
-
 </div>
-
-<footer>
-  <div class="container">Funnel Validator · Apertura de Cuenta Online — Marketing Analytics</div>
-</footer>
 
 <script>
 const STEPS = [
@@ -523,217 +174,131 @@ const STEPS = [
 ];
 const FINAL_EVENT = STEPS[2];
 
+// Configuración interna (No visible al usuario)
+const GEO_LIMITS = { city: 3600, state: 7200 }; // segundos
+
 let allResults = [];
-let filteredResults = [];
 let currentFilter = 'all';
-let currentPage = 1;
-const PAGE_SIZE = 50;
-let rawParsedRows = [];
 
-const uploadZone = document.getElementById('uploadZone');
-const csvInput = document.getElementById('csvInput');
-
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault();
-  uploadZone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) processFile(file);
-});
-csvInput.addEventListener('change', e => { if (e.target.files[0]) processFile(e.target.files[0]); });
-
-function processFile(file) {
+document.getElementById('csvInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
   document.getElementById('loadingBar').classList.add('active');
-  document.getElementById('statsSection').style.display = 'none';
-  document.getElementById('emptyState').style.display = 'none';
-
+  
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
     complete: results => {
-      rawParsedRows = results.data;
+      analyze(results.data);
       document.getElementById('loadingBar').classList.remove('active');
-      analyze(rawParsedRows);
-    },
-    error: () => {
-      document.getElementById('loadingBar').classList.remove('active');
-      alert('Error al leer el archivo CSV.');
+      document.getElementById('resultsSection').style.display = 'block';
     }
   });
-}
-
-function getConfig() {
-  return {
-    minSeconds: 0, 
-    maxDays: 365,
-    minCityTravel: 60 * 60,   // 60 min
-    minStateTravel: 120 * 60  // 120 min
-  };
-}
-
-function normalizeColName(name) {
-  return name?.trim().toLowerCase().replace(/\s+/g, '_');
-}
-
-function findCol(row, ...candidates) {
-  const keys = Object.keys(row);
-  for (const cand of candidates) {
-    const found = keys.find(k => normalizeColName(k) === normalizeColName(cand));
-    if (found) return row[found];
-  }
-  return '';
-}
-
-function parseDate(str) {
-  if (!str) return null;
-  const d = new Date(str.trim());
-  return isNaN(d.getTime()) ? null : d;
-}
+});
 
 function analyze(rows) {
-  const cfg = getConfig();
   const byId = {};
-  for (const row of rows) {
-    const id = findCol(row, 'AppsFlyer ID', 'appsflyer_id', 'appsflyer id') || '';
-    const event = findCol(row, 'Event Name', 'event_name', 'eventname') || '';
-    if (!id || !event) continue;
+  rows.forEach(row => {
+    const id = row['AppsFlyer ID'] || row['appsflyer_id'] || '';
+    const event = row['Event Name'] || row['event_name'] || '';
+    if (!id || !event) return;
+    
     if (!byId[id]) byId[id] = [];
     byId[id].push({
       event: event.trim(),
-      time: parseDate(findCol(row, 'Event Time', 'event_time', 'eventtime')),
-      city: (findCol(row, 'City', 'city') || '').trim().toLowerCase(),
-      state: (findCol(row, 'State', 'state') || '').trim().toLowerCase()
+      time: new Date(row['Event Time'] || row['event_time']),
+      city: (row['City'] || '').toLowerCase().trim(),
+      state: (row['State'] || '').toLowerCase().trim()
     });
-  }
+  });
 
-  const results = [];
-  for (const [id, events] of Object.entries(byId)) {
-    if (events.some(e => e.event === FINAL_EVENT)) {
-      results.push(validateId(id, events, cfg));
-    }
-  }
+  allResults = Object.entries(byId)
+    .filter(([id, events]) => events.some(e => e.event === FINAL_EVENT))
+    .map(([id, events]) => validate(id, events));
 
-  allResults = results;
-  if (results.length === 0) {
-    document.getElementById('emptyState').style.display = 'block';
-    return;
-  }
-
-  updateStats(results);
-  setFilter(currentFilter, null, true);
-  document.getElementById('statsSection').style.display = 'block';
-}
-
-function validateId(id, events, cfg) {
-  const issues = [];
-  const registeredSteps = STEPS.filter(s => events.some(e => e.event === s));
-  const missingSteps = STEPS.slice(0, -1).filter(s => !registeredSteps.includes(s));
-
-  if (missingSteps.length > 0) {
-    missingSteps.forEach(s => issues.push({ type: 'error', msg: `Falta paso: ${s.split('-app_')[1]}` }));
-  }
-
-  const funnelEvents = STEPS
-    .map(s => events.filter(e => e.event === s).sort((a, b) => (a.time || 0) - (b.time || 0))[0])
-    .filter(Boolean);
-
-  for (let i = 1; i < funnelEvents.length; i++) {
-    const prev = funnelEvents[i - 1];
-    const curr = funnelEvents[i];
-    if (!prev.time || !curr.time) continue;
-    const diffSec = (curr.time - prev.time) / 1000;
-
-    if (prev.city && curr.city && prev.city !== curr.city && diffSec < cfg.minCityTravel) {
-      issues.push({ type: 'warn', msg: `📍 Ciudad imposible: ${titleCase(prev.city)} → ${titleCase(curr.city)} (${Math.round(diffSec/60)}min)` });
-    }
-    if (prev.state && curr.state && prev.state !== curr.state && diffSec < cfg.minStateTravel) {
-      issues.push({ type: 'warn', msg: `🗺 Depto imposible: ${titleCase(prev.state)} → ${titleCase(curr.state)} (${Math.round(diffSec/60)}min)` });
-    }
-  }
-
-  const hasErrors = issues.some(i => i.type === 'error');
-  const hasWarns = issues.some(i => i.type === 'warn');
-  const status = hasErrors ? 'invalid' : (hasWarns ? 'suspicious' : 'clean');
-  const totalMs = funnelEvents.length >= 2 ? (funnelEvents[funnelEvents.length-1].time - funnelEvents[0].time) : null;
-
-  return { id, status, registeredSteps, missingSteps, issues, totalMs, cities: [...new Set(funnelEvents.map(e => e.city).filter(Boolean))] };
-}
-
-function titleCase(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
-
-function updateStats(results) {
-  document.getElementById('statTotal').textContent = results.length;
-  document.getElementById('statValidSteps').textContent = results.filter(r => r.missingSteps.length === 0).length;
-  document.getElementById('statInvalidSteps').textContent = results.filter(r => r.missingSteps.length > 0).length;
-  document.getElementById('statSuspicious').textContent = results.filter(r => r.status === 'suspicious').length;
-  const billable = results.filter(r => r.status === 'clean' || r.status === 'suspicious').length;
-  document.getElementById('statClean').textContent = billable;
-}
-
-function setFilter(filter, btn, force = false) {
-  currentFilter = filter;
-  currentPage = 1;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-
-  if (filter === 'all') filteredResults = allResults;
-  else if (filter === 'clean') filteredResults = allResults.filter(r => r.status === 'clean' || r.status === 'suspicious');
-  else if (filter === 'suspicious') filteredResults = allResults.filter(r => r.status === 'suspicious');
-  else if (filter === 'invalid') filteredResults = allResults.filter(r => r.status === 'invalid');
+  updateStats();
   renderTable();
 }
 
+function validate(id, events) {
+  const registered = STEPS.filter(s => events.some(e => e.event === s));
+  const missing = STEPS.filter(s => !registered.includes(s));
+  
+  const funnelEvents = STEPS
+    .map(s => events.filter(e => e.event === s).sort((a,b) => a.time - b.time)[0])
+    .filter(Boolean);
+
+  let geoAlerts = [];
+  for (let i = 1; i < funnelEvents.length; i++) {
+    const p = funnelEvents[i-1];
+    const c = funnelEvents[i];
+    const diff = (c.time - p.time) / 1000;
+
+    if (p.city !== c.city && p.city && c.city && diff < GEO_LIMITS.city) {
+      geoAlerts.push(`Ciudad: ${p.city} -> ${c.city} (${Math.round(diff/60)}m)`);
+    }
+  }
+
+  let status = 'clean';
+  if (missing.length > 0) status = 'invalid';
+  else if (geoAlerts.length > 0) status = 'suspicious';
+
+  return {
+    id,
+    status,
+    registered,
+    missing,
+    geoAlerts,
+    duration: funnelEvents.length > 1 ? (funnelEvents[funnelEvents.length-1].time - funnelEvents[0].time) : 0,
+    cities: [...new Set(funnelEvents.map(e => e.city).filter(Boolean))]
+  };
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = allResults.length;
+  document.getElementById('statValid').textContent = allResults.filter(r => r.missing.length === 0).length;
+  document.getElementById('statInvalid').textContent = allResults.filter(r => r.status === 'invalid').length;
+  document.getElementById('statWarn').textContent = allResults.filter(r => r.status === 'suspicious').length;
+  document.getElementById('statClean').textContent = allResults.filter(r => r.status !== 'invalid').length;
+}
+
 function renderTable() {
-  const tbody = document.getElementById('tableBody');
-  const page = filteredResults.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const body = document.getElementById('tableBody');
+  const filtered = allResults.filter(r => {
+    if (currentFilter === 'clean') return r.status !== 'invalid';
+    if (currentFilter === 'invalid') return r.status === 'invalid';
+    return true;
+  });
 
-  tbody.innerHTML = page.map(r => {
-    const badgeClass = r.status === 'clean' ? 'badge-valid' : r.status === 'suspicious' ? 'badge-warn' : 'badge-invalid';
-    const badgeText = r.status === 'clean' ? 'Facturable' : r.status === 'suspicious' ? 'Sospechoso' : 'Inválido';
-    
-    return `<tr>
-      <td style="color:var(--text);font-weight:500">${r.id}</td>
-      <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-      <td style="font-size:11px">${STEPS.map(s => `<span style="color:${r.registeredSteps.includes(s)?'var(--valid)':'var(--invalid)'}">${r.registeredSteps.includes(s)?'✓':'✗'} ${s.split('-app_')[1]}</span>`).join(' ')}</td>
-      <td>${r.totalMs ? formatDuration(r.totalMs) : '—'}</td>
-      <td style="font-size:11px">${r.cities.map(titleCase).join(' → ') || '—'}</td>
-      <td><div class="issues-list">${r.issues.map(i => `<div class="issue-item ${i.type === 'error' ? 'error' : ''}">${i.msg}</div>`).join('') || '<span style="color:var(--valid)">OK</span>'}</div></td>
-    </tr>`;
-  }).join('');
-  renderPagination();
+  body.innerHTML = filtered.map(r => `
+    <tr>
+      <td>${r.id}</td>
+      <td><span class="badge badge-${r.status}">${r.status === 'clean' ? 'OK' : r.status === 'suspicious' ? 'GEO' : 'PASOS'}</span></td>
+      <td>${STEPS.map(s => `<span style="color:${r.registered.includes(s)?'var(--valid)':'var(--invalid)'}">${r.registered.includes(s)?'✓':'✗'}</span>`).join(' ')}</td>
+      <td>${Math.floor(r.duration/60000)}m</td>
+      <td>
+        ${r.geoAlerts.map(a => `<div class="issue-item warn">⚠️ ${a}</div>`).join('') || '<span style="color:var(--valid)">✓ Sin alertas</span>'}
+      </td>
+    </tr>
+  `).join('');
 }
 
-function formatDuration(ms) {
-  const s = Math.floor(ms / 1000);
-  if (s < 60) return `${s}s`;
-  const m = Math.floor(s/60);
-  if (m < 60) return `${m}m ${s%60}s`;
-  return `${Math.floor(m/60)}h ${m%60}m`;
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
 }
 
-function renderPagination() {
-  const pages = Math.ceil(filteredResults.length / PAGE_SIZE);
-  const wrap = document.getElementById('paginationWrap');
-  if (pages <= 1) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>
-                    <span class="page-info">Página ${currentPage} de ${pages}</span>
-                    <button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
-}
-
-function goPage(p) { currentPage = p; renderTable(); }
-
-function exportCSV(which) {
-  let data = allResults;
-  if (which === 'clean') data = allResults.filter(r => r.status === 'clean' || r.status === 'suspicious');
-  if (which === 'invalid') data = allResults.filter(r => r.status === 'invalid');
-  const rows = [['AppsFlyer ID', 'Estado', 'Ciudades', 'Problemas']];
-  data.forEach(r => rows.push([r.id, r.status, r.cities.join(' > '), r.issues.map(i => i.msg).join(' | ')]));
-  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+function exportCSV() {
+  const data = allResults.filter(r => r.status !== 'invalid');
+  let csv = "AppsFlyer ID,Estado,Ciudades,Alertas\n";
+  data.forEach(r => csv += `${r.id},${r.status},${r.cities.join(' > ')},${r.geoAlerts.join(' | ')}\n`);
+  const blob = new Blob([csv], { type: 'text/csv' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `funnel_${which}.csv`;
+  a.download = 'facturables.csv';
   a.click();
 }
 </script>
