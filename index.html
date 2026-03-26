@@ -10,12 +10,9 @@
   :root {
     --bg:          #F4F5F7;
     --surface:     #FFFFFF;
-    --surface2:    #F8F9FB;
     --border:      #E4E6EB;
-    --border-soft: #ECEEF2;
     --brand:       #5B47E0;
     --brand-light: #EDE9FD;
-    --brand-mid:   #7C6EF5;
     --valid:       #16A34A;
     --valid-bg:    #DCFCE7;
     --invalid:     #DC2626;
@@ -23,12 +20,7 @@
     --warn:        #D97706;
     --warn-bg:     #FEF3C7;
     --text:        #111827;
-    --text-mid:    #374151;
     --muted:       #6B7280;
-    --muted-soft:  #9CA3AF;
-    --sidebar-w:   220px;
-    --topbar-bg:   #18181B;
-    --topbar-h:    48px;
     --font: 'DM Sans', sans-serif;
     --mono: 'DM Mono', monospace;
     --radius: 8px;
@@ -37,239 +29,108 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; display: flex; flex-direction: column; }
 
-  /* TOPBAR */
-  .topbar { background: var(--topbar-bg); height: var(--topbar-h); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; z-index: 100; }
-  .topbar-logo { display: flex; align-items: center; gap: 8px; color: #fff; font-weight: 700; font-size: 15px; letter-spacing: -0.3px; }
-  .logo-mark { width: 26px; height: 26px; background: var(--brand); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-  .topbar-sep { flex: 1; }
-  .topbar-badge { font-size: 11px; font-family: var(--mono); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 20px; }
-  .topbar-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
-
-  /* LAYOUT */
-  .layout { display: flex; flex: 1; min-height: calc(100vh - var(--topbar-h)); }
-
-  /* SIDEBAR */
-  .sidebar { width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; padding: 20px 0 16px; }
-  .sidebar-section-label { font-size: 10px; font-weight: 600; color: var(--muted-soft); letter-spacing: 1.2px; text-transform: uppercase; padding: 0 16px; margin: 16px 0 6px; }
-  .sidebar-section-label:first-child { margin-top: 0; }
-  .sidebar-item { display: flex; align-items: center; gap: 9px; padding: 7px 16px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: background 0.12s, color 0.12s; border-left: 2px solid transparent; }
-  .sidebar-item:hover { background: var(--bg); color: var(--text-mid); }
-  .sidebar-item.active { background: var(--brand-light); color: var(--brand); border-left-color: var(--brand); font-weight: 600; }
-  .sidebar-item .icon { font-size: 14px; width: 18px; text-align: center; }
-
-  /* MAIN */
-  .main { flex: 1; padding: 28px 32px; overflow-x: hidden; min-width: 0; }
-  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
-  .page-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
-  .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .breadcrumb span { color: var(--muted-soft); }
-  .breadcrumb a { color: var(--muted); text-decoration: none; }
-  .breadcrumb a:hover { color: var(--brand); }
-  .page-actions { display: flex; align-items: center; gap: 8px; }
-
-  /* KPI CARDS */
-  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
-  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px; transition: box-shadow 0.15s; }
-  .kpi-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-  .kpi-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .kpi-icon.purple { background: #EDE9FD; }
-  .kpi-icon.green  { background: #DCFCE7; }
-  .kpi-icon.red    { background: #FEE2E2; }
-  .kpi-icon.amber  { background: #FEF3C7; }
-  .kpi-icon.blue   { background: #DBEAFE; }
-  .kpi-body { flex: 1; min-width: 0; }
-  .kpi-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; }
-  .kpi-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; letter-spacing: -0.5px; margin-bottom: 3px; }
-  .kpi-sub { font-size: 11px; color: var(--muted-soft); }
-
-  /* SECTION CARDS */
-  .section-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; }
-  .section-card-title { font-size: 13px; font-weight: 600; color: var(--text-mid); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-  .step-pill { background: var(--brand); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; font-family: var(--mono); }
-
-  /* UPLOAD */
-  .upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; cursor: pointer; transition: all 0.18s; position: relative; overflow: hidden; background: var(--surface2); }
-  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--brand); background: var(--brand-light); }
-  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  .upload-icon-wrap { width: 52px; height: 52px; background: var(--brand-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 14px; }
-  .upload-zone h2 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
-  .upload-zone p { font-size: 12.5px; color: var(--muted); }
-  .upload-hint { margin-top: 16px; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-family: var(--mono); color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; }
-
-  /* CRITERIA */
-  .criteria-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  .criteria-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; }
-  .criteria-card-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .lock-badge { font-size: 10px; color: var(--muted-soft); border: 1px solid var(--border); padding: 1px 7px; border-radius: 8px; font-weight: 400; letter-spacing: 0; text-transform: none; }
-  .criteria-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-soft); }
-  .criteria-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .criteria-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex-shrink: 0; }
-  .criteria-label { font-size: 12px; color: var(--muted); flex: 1; line-height: 1.4; }
-  .criteria-value { font-family: var(--mono); font-size: 11.5px; color: var(--text); font-weight: 500; background: var(--surface2); border: 1px solid var(--border); padding: 3px 10px; border-radius: 6px; white-space: nowrap; }
-  .criteria-note { font-size: 11px; color: var(--muted-soft); line-height: 1.6; padding-top: 8px; border-top: 1px solid var(--border-soft); margin-top: 2px; }
-
-  /* TABLE */
-  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .table-scroll { overflow-x: auto; max-height: 520px; overflow-y: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead { position: sticky; top: 0; z-index: 2; }
-  th { background: var(--surface2); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
-  td { padding: 10px 14px; border-bottom: 1px solid var(--border-soft); font-size: 12.5px; color: var(--text-mid); }
+  .topbar { background: #18181B; height: 48px; display: flex; align-items: center; padding: 0 20px; color: #fff; z-index: 100; }
+  .logo-mark { width: 26px; height: 26px; background: var(--brand); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 14px; }
   
-  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-  .badge-valid   { background: var(--valid-bg);   color: var(--valid); }
-  .badge-invalid { background: var(--invalid-bg); color: var(--invalid); }
-  .badge-warn    { background: var(--warn-bg);    color: var(--warn); }
-  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-  .dot-valid   { background: var(--valid); }
-  .dot-invalid { background: var(--invalid); }
-  .dot-warn    { background: var(--warn); }
+  .layout { display: flex; flex: 1; }
+  .sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; }
+  .sidebar-item { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--muted); border-left: 2px solid transparent; }
+  .sidebar-item.active { background: var(--brand-light); color: var(--brand); border-left-color: var(--brand); }
 
-  .filter-tabs { display: flex; gap: 6px; }
-  .tab { padding: 5px 13px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
+  .main { flex: 1; padding: 28px 32px; overflow-x: hidden; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; transition: box-shadow 0.15s; }
+  .kpi-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+  .kpi-value { font-size: 24px; font-weight: 700; }
+
+  .upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; cursor: pointer; background: #fff; }
+  .upload-zone:hover { border-color: var(--brand); background: var(--brand-light); }
+  
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-top: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #F8F9FB; padding: 12px; text-align: left; font-size: 11px; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  td { padding: 12px; border-bottom: 1px solid #ECEEF2; }
+
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-valid { background: var(--valid-bg); color: var(--valid); }
+  .badge-invalid { background: var(--invalid-bg); color: var(--invalid); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+
+  .filter-tabs { display: flex; gap: 8px; margin-bottom: 15px; }
+  .tab { padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid var(--border); background: #fff; }
   .tab.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 
-  .issue-item { font-size: 11px; color: var(--warn); }
-  .issue-item.error { color: var(--invalid); font-weight: 600; }
-
-  .btn { padding: 8px 16px; border-radius: var(--radius); font-weight: 600; font-size: 13px; cursor: pointer; border: none; }
-  .btn-primary { background: var(--brand); color: #fff; }
+  .btn { padding: 10px 20px; border-radius: var(--radius); font-weight: 600; cursor: pointer; border: none; background: var(--brand); color: #fff; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-logo"><div class="logo-mark">🚀</div> RocketLab</div>
-  <div class="topbar-sep"></div>
-  <div class="topbar-badge">AppsFlyer · Validación de Embudo Estricta</div>
-  <div class="topbar-dot">A</div>
+  <div class="logo-mark">🚀</div> RocketLab — Funnel Validator
 </div>
 
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-section-label">Analytics</div>
-    <div class="sidebar-item active"><span class="icon">📊</span> Funnel Validator</div>
+    <div class="sidebar-item active">📊 Validador</div>
   </aside>
 
   <main class="main">
-    <div class="page-header">
-      <div>
-        <div class="page-title">Validador de Pasos y Geolocalización</div>
-        <div class="breadcrumb"><a href="#">Analytics</a> <span>/</span> Funnel Validator</div>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-primary" onclick="document.getElementById('csvInput').click()">+ Cargar CSV</button>
-      </div>
-    </div>
-
     <div class="kpi-grid" id="statsSection" style="display:none">
-      <div class="kpi-card">
-        <div class="kpi-icon purple">📂</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Total IDs Analizados</div>
-          <div class="kpi-value" id="statTotal">0</div>
-        </div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon green">✅</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Funnel Completo</div>
-          <div class="kpi-value" style="color:var(--valid)" id="statValidSteps">0</div>
-        </div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon red">✗</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Funnel Incompleto</div>
-          <div class="kpi-value" style="color:var(--invalid)" id="statInvalidSteps">0</div>
-        </div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon amber">⚠️</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Duda Geográfica</div>
-          <div class="kpi-value" style="color:var(--warn)" id="statSuspicious">0</div>
-        </div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon blue">💰</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Facturables (Neto)</div>
-          <div class="kpi-value" style="color:var(--brand)" id="statClean">0</div>
-        </div>
-      </div>
+      <div class="kpi-card"><div class="kpi-label">Total IDs</div><div class="kpi-value" id="statTotal">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Funnel OK</div><div class="kpi-value" style="color:var(--valid)" id="statValidSteps">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Faltan Pasos</div><div class="kpi-value" style="color:var(--invalid)" id="statInvalidSteps">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Geo Alert</div><div class="kpi-value" style="color:var(--warn)" id="statSuspicious">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Facturables</div><div class="kpi-value" style="color:var(--brand)" id="statClean">0</div></div>
     </div>
 
-    <div class="section-card" id="uploadCard">
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" accept=".csv" id="csvInput" />
-        <div class="upload-icon-wrap">📂</div>
-        <h2>Arrastra tu archivo AppsFlyer</h2>
-        <p>Columnas requeridas: AppsFlyer ID, Event Name, Event Time, City, State</p>
-      </div>
-    </div>
-
-    <div class="criteria-grid" id="criteriaPanel" style="display:none">
-      <div class="criteria-card">
-        <div class="criteria-card-title">📋 Criterio 1: Pasos Requeridos</div>
-        <div class="criteria-note">Se valida que el ID haya pasado por los 3 estados del funnel, sin importar el tiempo entre ellos.</div>
-      </div>
-      <div class="criteria-card">
-        <div class="criteria-card-title">📍 Criterio 2: Lógica Geográfica</div>
-        <div class="criteria-note">Cambio de ciudad requiere min. 60m. Cambio de estado requiere min. 120m.</div>
-      </div>
+    <div id="uploadCard" class="upload-zone" onclick="document.getElementById('csvInput').click()">
+      <input type="file" accept=".csv" id="csvInput" style="display:none" />
+      <h2>Cargar CSV de AppsFlyer</h2>
+      <p>Se validarán Step 5 y Completed Contratado + Geolocalización</p>
     </div>
 
     <div id="resultsSection" style="display:none">
-      <div class="results-header" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-        <div class="results-title">Detalle de Usuarios</div>
-        <div class="filter-tabs">
-          <button class="tab active" onclick="setFilter('all', this)">Todos</button>
-          <button class="tab" onclick="setFilter('clean', this)">✅ Facturables</button>
-          <button class="tab" onclick="setFilter('invalid', this)">✗ Inválidos</button>
-        </div>
+      <div class="filter-tabs">
+        <button class="tab active" onclick="setFilter('all', this)">Todos</button>
+        <button class="tab" onclick="setFilter('clean', this)">✅ Facturables</button>
+        <button class="tab" onclick="setFilter('invalid', this)">✗ Inválidos</button>
       </div>
       <div class="table-wrap">
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>AppsFlyer ID</th>
-                <th>Estado Funnel</th>
-                <th>Validación Geo</th>
-                <th>Pasos</th>
-                <th>Ciudades</th>
-                <th>Alertas</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>AppsFlyer ID</th>
+              <th>Criterio 1 (Funnel)</th>
+              <th>Criterio 2 (Geo)</th>
+              <th>Pasos Registrados</th>
+              <th>Ciudades</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
       </div>
     </div>
   </main>
 </div>
 
 <script>
+// ELIMINADO: af_apertura_cuenta_en_linea_no_cliente-app_page_visit
 const STEPS = [
-  'af_apertura_cuenta_en_linea_no_cliente-app_page_visit',
   'af_apertura_cuenta_en_linea_no_cliente-app_step_5',
   'af_apertura_cuenta_en_linea_no_cliente-app_completed_contratado'
 ];
-const CFG = { minCityTravel: 60*60, minStateTravel: 120*60 };
-let allResults = [], filteredResults = [], currentFilter = 'all';
+const CFG = { minCityTravel: 3600, minStateTravel: 7200 }; // segundos
+let allResults = [];
 
 document.getElementById('csvInput').addEventListener('change', e => {
-  if (e.target.files[0]) processFile(e.target.files[0]);
+  if (e.target.files[0]) {
+    Papa.parse(e.target.files[0], {
+      header: true,
+      skipEmptyLines: true,
+      complete: r => analyze(r.data)
+    });
+  }
 });
-
-function processFile(file) {
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    complete: r => analyze(r.data)
-  });
-}
 
 function analyze(rows) {
   const byId = {};
@@ -281,100 +142,73 @@ function analyze(rows) {
     byId[id].push({
       event: event.trim(),
       time: new Date(row['Event Time'] || row['event_time']),
-      city: (row['City'] || '').trim().toLowerCase(),
-      state: (row['State'] || '').trim().toLowerCase()
+      city: (row['City'] || '').toLowerCase(),
+      state: (row['State'] || '').toLowerCase()
     });
   });
 
-  allResults = Object.entries(byId).map(([id, events]) => validateId(id, events));
+  allResults = Object.entries(byId).map(([id, events]) => {
+    // 1. Validar Funnel (Sin page_visit)
+    const registered = STEPS.filter(s => events.some(e => e.event === s));
+    const isComplete = registered.length === STEPS.length;
+
+    // 2. Validar Geo
+    const sorted = events.sort((a, b) => a.time - b.time);
+    let geoIssue = false;
+    for (let i = 1; i < sorted.length; i++) {
+      const p = sorted[i-1], c = sorted[i];
+      const diff = (c.time - p.time) / 1000;
+      if (p.city && c.city && p.city !== c.city && diff < CFG.minCityTravel) geoIssue = true;
+      if (p.state && c.state && p.state !== c.state && diff < CFG.minStateTravel) geoIssue = true;
+    }
+
+    return {
+      id,
+      isComplete,
+      geoIssue,
+      status: !isComplete ? 'invalid' : (geoIssue ? 'suspicious' : 'clean'),
+      registered,
+      cities: [...new Set(events.map(e => e.city).filter(Boolean))]
+    };
+  });
+
   renderUI();
-}
-
-function validateId(id, events) {
-  const issues = [];
-  const registeredSteps = STEPS.filter(s => events.some(e => e.event === s));
-  const missingSteps = STEPS.filter(s => !registeredSteps.includes(s));
-  
-  // Criterio 1: Debe tener todos los pasos
-  const isFunnelComplete = missingSteps.length === 0;
-  if (!isFunnelComplete) {
-    issues.push({ type: 'error', msg: `Funnel incompleto. Faltan: ${missingSteps.length} pasos.` });
-  }
-
-  // Criterio 2: Lógica Geográfica (ordenado por tiempo)
-  const sortedEvents = events.sort((a, b) => a.time - b.time);
-  for (let i = 1; i < sortedEvents.length; i++) {
-    const p = sortedEvents[i-1], c = sortedEvents[i];
-    const diffSeconds = (c.time - p.time) / 1000;
-
-    if (p.city && c.city && p.city !== c.city && diffSeconds < CFG.minCityTravel) {
-      issues.push({ type: 'warn', msg: `📍 Salto de ciudad muy rápido (${Math.round(diffSeconds/60)} min)` });
-    }
-    if (p.state && c.state && p.state !== c.state && diffSeconds < CFG.minStateTravel) {
-      issues.push({ type: 'warn', msg: `🗺️ Salto de estado imposible (${Math.round(diffSeconds/60)} min)` });
-    }
-  }
-
-  const hasError = !isFunnelComplete;
-  const hasWarn = issues.some(i => i.type === 'warn');
-  
-  return {
-    id,
-    isComplete: isFunnelComplete,
-    hasGeoIssue: hasWarn,
-    status: hasError ? 'invalid' : (hasWarn ? 'suspicious' : 'clean'),
-    registeredSteps,
-    issues,
-    cities: [...new Set(events.map(e => e.city).filter(Boolean))]
-  };
 }
 
 function renderUI() {
   document.getElementById('statsSection').style.display = 'grid';
-  document.getElementById('criteriaPanel').style.display = 'grid';
   document.getElementById('resultsSection').style.display = 'block';
   document.getElementById('uploadCard').style.display = 'none';
 
-  const valid = allResults.filter(r => r.isComplete).length;
-  const suspicious = allResults.filter(r => r.isComplete && r.hasGeoIssue).length;
+  const comp = allResults.filter(r => r.isComplete).length;
+  const susp = allResults.filter(r => r.isComplete && r.geoIssue).length;
 
   document.getElementById('statTotal').textContent = allResults.length;
-  document.getElementById('statValidSteps').textContent = valid;
-  document.getElementById('statInvalidSteps').textContent = allResults.length - valid;
-  document.getElementById('statSuspicious').textContent = suspicious;
-  document.getElementById('statClean').textContent = valid - suspicious;
+  document.getElementById('statValidSteps').textContent = comp;
+  document.getElementById('statInvalidSteps').textContent = allResults.length - comp;
+  document.getElementById('statSuspicious').textContent = susp;
+  document.getElementById('statClean').textContent = comp - susp;
 
   setFilter('all');
 }
 
-function setFilter(filter, btn) {
-  currentFilter = filter;
+function setFilter(f, btn) {
   if (btn) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
   }
 
-  if (filter === 'all') filteredResults = allResults;
-  else if (filter === 'clean') filteredResults = allResults.filter(r => r.status === 'clean');
-  else if (filter === 'invalid') filteredResults = allResults.filter(r => r.status === 'invalid');
+  const filtered = f === 'all' ? allResults : 
+                 f === 'clean' ? allResults.filter(r => r.status === 'clean') : 
+                 allResults.filter(r => r.status === 'invalid');
 
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = filteredResults.map(r => `
+  document.getElementById('tableBody').innerHTML = filtered.map(r => `
     <tr>
-      <td style="font-family:var(--mono); font-weight:600">${r.id}</td>
-      <td>
-        <span class="badge ${r.isComplete ? 'badge-valid' : 'badge-invalid'}">
-          ${r.isComplete ? '✓ Completo' : '✗ Incompleto'}
-        </span>
-      </td>
-      <td>
-        <span class="badge ${r.hasGeoIssue ? 'badge-warn' : 'badge-valid'}">
-          ${r.hasGeoIssue ? '⚠ Sospechoso' : '✓ Lógico'}
-        </span>
-      </td>
-      <td style="font-size:11px">${STEPS.map(s => r.registeredSteps.includes(s) ? '✅' : '❌').join(' ')}</td>
+      <td style="font-family:var(--mono)">${r.id}</td>
+      <td><span class="badge ${r.isComplete ? 'badge-valid' : 'badge-invalid'}">${r.isComplete ? 'Completo' : 'Faltan Pasos'}</span></td>
+      <td><span class="badge ${r.geoIssue ? 'badge-warn' : 'badge-valid'}">${r.geoIssue ? 'Sospechoso' : 'Lógico'}</span></td>
+      <td>${STEPS.map(s => r.registered.includes(s) ? '✅' : '❌').join(' ')}</td>
       <td style="font-size:11px; color:var(--muted)">${r.cities.join(' → ')}</td>
-      <td>${r.issues.map(i => `<div class="issue-item ${i.type}">${i.msg}</div>`).join('')}</td>
     </tr>
   `).join('');
 }
