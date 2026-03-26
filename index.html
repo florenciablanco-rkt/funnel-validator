@@ -140,6 +140,7 @@
     border: 1px solid var(--border);
   }
 
+  /* Criteria panel — read-only */
   .criteria-panel {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -477,6 +478,7 @@
     </div>
   </div>
 
+  <!-- Criteria panel — informativo, no editable -->
   <div class="criteria-panel" id="criteriaPanel" style="display:none">
     <div class="criteria-card">
       <h3>⏱ Criterios Temporales <span class="lock-icon">🔒 fijo</span></h3>
@@ -566,6 +568,7 @@
             <tr>
               <th>AppsFlyer ID</th>
               <th>Estado</th>
+              <th>Clasificación</th>
               <th>Pasos registrados</th>
               <th>Tiempo total</th>
               <th>Ciudades recorridas</th>
@@ -817,9 +820,17 @@ function renderTable() {
       ? '<span style="color:var(--valid);font-size:11px">Sin problemas</span>'
       : r.issues.map(i => `<div class="issue-item ${i.type === 'error' ? 'error' : ''}">${i.msg}</div>`).join('');
 
+    const hasSteps = r.missingSteps.length === 0;
+    const hasIssues = r.issues.some(i => i.type === 'warn');
+    let clasif, clasifClass;
+    if (!hasSteps) { clasif = '✗ Inválido'; clasifClass = 'badge-invalid'; }
+    else if (hasIssues) { clasif = '⚠ Sospechoso'; clasifClass = 'badge-warn'; }
+    else { clasif = '✓ Facturable'; clasifClass = 'badge-valid'; }
+
     return `<tr>
       <td style="color:var(--text);font-weight:500">${r.id}</td>
       <td><span class="badge ${badgeClass}"><span class="dot dot-${r.status === 'clean' ? 'valid' : r.status === 'suspicious' ? 'warn' : 'invalid'}"></span>${badgeText}</span></td>
+      <td><span class="badge ${clasifClass}">${clasif}</span></td>
       <td style="max-width:320px;white-space:normal;font-size:11px">${stepsHtml}</td>
       <td>${totalTime}</td>
       <td style="max-width:200px;white-space:normal;font-size:11px">${citiesStr}</td>
