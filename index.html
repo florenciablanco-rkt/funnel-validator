@@ -7,339 +7,514 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
-  :root {
-    --bg:          #F4F5F7;
-    --surface:     #FFFFFF;
-    --surface2:    #F8F9FB;
-    --border:      #E4E6EB;
-    --border-soft: #ECEEF2;
-    --brand:       #5B47E0;
-    --brand-light: #EDE9FD;
-    --brand-mid:   #7C6EF5;
-    --valid:       #16A34A;
-    --valid-bg:    #DCFCE7;
-    --invalid:     #DC2626;
-    --invalid-bg:  #FEE2E2;
-    --warn:        #D97706;
-    --warn-bg:     #FEF3C7;
-    --text:        #111827;
-    --text-mid:    #374151;
-    --muted:       #6B7280;
-    --muted-soft:  #9CA3AF;
-    --sidebar-w:   220px;
-    --topbar-bg:   #18181B;
-    --topbar-h:    48px;
-    --font: 'DM Sans', sans-serif;
-    --mono: 'DM Mono', monospace;
-    --radius: 8px;
-    --radius-lg: 12px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; display: flex; flex-direction: column; }
+:root{
+  --bg:#0d0d1a;--sbg:#10101e;--sfc:#16162a;--sf2:#1e1e35;--sf3:#252540;
+  --bd:rgba(255,255,255,0.07);--bds:rgba(255,255,255,0.04);
+  --vl:#7c3aed;--vll:#a78bfa;--vlg:rgba(124,58,237,0.15);
+  --go:#f59e0b;--gog:rgba(245,158,11,0.15);
+  --bl:#3b82f6;--blg:rgba(59,130,246,0.15);
+  --gn:#10b981;--gng:rgba(16,185,129,0.12);
+  --rd:#ef4444;--rdg:rgba(239,68,68,0.12);
+  --tx:#e8e8f2;--ts:#a0a0c0;--tm:#5a5a80;
+  --fn:'DM Sans',sans-serif;--mn:'DM Mono',monospace;--r:10px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--fn);min-height:100vh;display:flex;overflow-x:hidden}
 
-  /* TOPBAR */
-  .topbar { background: var(--topbar-bg); height: var(--topbar-h); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; z-index: 100; }
-  .topbar-logo { display: flex; align-items: center; gap: 8px; color: #fff; font-weight: 700; font-size: 15px; letter-spacing: -0.3px; }
-  .logo-mark { width: 26px; height: 26px; background: var(--brand); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-  .topbar-sep { flex: 1; }
-  .topbar-badge { font-size: 11px; font-family: var(--mono); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 20px; }
+/* Sidebar */
+.sidebar{width:220px;min-height:100vh;background:var(--sbg);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100;padding-bottom:24px}
+.sb-logo{padding:16px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.lm{width:30px;height:30px;background:var(--vl);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.sb-logo .name{font-size:14px;font-weight:700;letter-spacing:-0.3px}
+.sb-logo .sub{font-size:10px;color:var(--tm);font-family:var(--mn)}
+.sb-sec{padding:18px 16px 5px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--tm);font-family:var(--mn)}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 14px;border-radius:7px;margin:1px 8px;color:var(--ts);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.sb-item:hover{background:var(--sfc);color:var(--tx)}
+.sb-item.active{background:var(--vlg);color:var(--vll)}
+.sb-item svg{width:15px;height:15px;opacity:.7;flex-shrink:0}
+.sb-item.active svg{opacity:1}
 
-  /* LAYOUT */
-  .layout { display: flex; flex: 1; min-height: calc(100vh - var(--topbar-h)); }
-  .sidebar { width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; }
-  .sidebar-item { display: flex; align-items: center; gap: 9px; padding: 7px 16px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-left: 2px solid transparent; }
-  .sidebar-item.active { background: var(--brand-light); color: var(--brand); border-left-color: var(--brand); font-weight: 600; }
+/* Main */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
 
-  /* MAIN */
-  .main { flex: 1; padding: 28px 32px; overflow-x: hidden; min-width: 0; }
-  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
-  .page-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+/* Topbar */
+.topbar{height:52px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--sbg);position:sticky;top:0;z-index:50}
+.tb-l{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tm);font-family:var(--mn)}
+.tb-l .cur{color:var(--tx);font-weight:500}
+.tb-r{display:flex;align-items:center;gap:8px}
+.tb-pill{display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:6px;font-size:11.5px;font-family:var(--mn);border:1px solid var(--bd);color:var(--ts);cursor:pointer;transition:all .15s}
+.tb-pill:hover{border-color:var(--vl);color:var(--vll)}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--gn);box-shadow:0 0 6px var(--gn);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.avatar{width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,var(--vl),var(--bl));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
 
-  /* KPI CARDS */
-  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
-  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px; }
-  .kpi-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .kpi-icon.purple { background: #EDE9FD; }
-  .kpi-icon.green  { background: #DCFCE7; }
-  .kpi-icon.red    { background: #FEE2E2; }
-  .kpi-icon.amber  { background: #FEF3C7; }
-  .kpi-icon.blue   { background: #DBEAFE; }
-  .kpi-body { flex: 1; min-width: 0; }
-  .kpi-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; }
-  .kpi-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; letter-spacing: -0.5px; }
+/* Page */
+.page{padding:26px;flex:1}
+.page-hd{margin-bottom:26px}
+.page-hd h1{font-size:20px;font-weight:700;letter-spacing:-.4px;margin-bottom:3px}
+.page-hd p{font-size:12px;color:var(--tm);font-family:var(--mn)}
+.sec-lbl{font-size:10.5px;font-family:var(--mn);color:var(--tm);letter-spacing:1.4px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.sec-lbl::before{content:'';width:3px;height:11px;background:var(--vl);border-radius:2px;display:inline-block}
 
-  /* UPLOAD */
-  .upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; cursor: pointer; background: var(--surface2); transition: all 0.18s; }
-  .upload-zone:hover { border-color: var(--brand); background: var(--brand-light); }
-  .upload-zone h2 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-  .upload-hint { margin-top: 16px; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-family: var(--mono); color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; }
+/* Upload */
+.upload-zone{border:1px dashed var(--bd);border-radius:var(--r);padding:38px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:var(--sfc);margin-bottom:22px}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--vl);background:var(--vlg)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uico{width:42px;height:42px;border-radius:9px;background:var(--sf2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:19px;margin:0 auto 12px}
+.upload-zone h2{font-size:14px;font-weight:600;margin-bottom:5px}
+.upload-zone p{color:var(--tm);font-size:12px;font-family:var(--mn)}
+.uchips{margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.uchips span{background:var(--sf2);border:1px solid var(--bd);padding:2px 9px;border-radius:4px;font-family:var(--mn);font-size:10.5px;color:var(--tm)}
 
-  /* TABLE */
-  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .table-scroll { overflow-x: auto; max-height: 520px; overflow-y: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead { position: sticky; top: 0; z-index: 2; }
-  th { background: var(--surface2); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; border-bottom: 1px solid var(--border); }
-  td { padding: 10px 14px; border-bottom: 1px solid var(--border-soft); font-size: 12.5px; color: var(--text-mid); }
-  tr:hover td { background: var(--surface2); }
+/* Funnel steps visual */
+.funnel-steps{display:flex;align-items:center;gap:0;margin-bottom:22px;overflow-x:auto;padding-bottom:4px}
+.fstep{display:flex;align-items:center;flex:1;min-width:0}
+.fstep-inner{flex:1;background:var(--sfc);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;min-width:0}
+.fstep-num{font-size:10px;font-family:var(--mn);color:var(--vll);margin-bottom:3px;letter-spacing:.5px}
+.fstep-name{font-size:11px;color:var(--ts);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fstep-arrow{color:var(--tm);font-size:16px;padding:0 6px;flex-shrink:0}
 
-  /* BADGES */
-  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-  .badge-valid   { background: var(--valid-bg);   color: var(--valid); }
-  .badge-invalid { background: var(--invalid-bg); color: var(--invalid); }
-  .badge-warn    { background: var(--warn-bg);    color: var(--warn); }
-  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-  .dot-clean     { background: var(--valid); }
-  .dot-invalid   { background: var(--invalid); }
-  .dot-suspicious { background: var(--warn); }
+/* Criteria */
+.crit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.crit-card{background:var(--sfc);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px}
+.crit-title{font-size:10.5px;font-family:var(--mn);color:var(--tm);text-transform:uppercase;letter-spacing:.9px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.lock-pill{padding:1px 7px;border:1px solid var(--bd);border-radius:20px;font-size:10px;color:var(--tm)}
+.crit-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bds);gap:10px}
+.crit-row:last-of-type{border-bottom:none;padding-bottom:0}
+.crit-row .lbl{font-size:12px;color:var(--ts);flex:1}
+.crit-row .val{font-family:var(--mn);font-size:11.5px;font-weight:500;color:var(--vll);background:var(--vlg);border:1px solid rgba(124,58,237,.2);padding:2px 9px;border-radius:5px;white-space:nowrap}
+.crit-note{margin-top:10px;padding:9px 11px;background:var(--sf2);border-radius:6px;font-size:10.5px;color:var(--tm);line-height:1.6}
 
-  .issues-list { display: flex; flex-direction: column; gap: 2px; }
-  .issue-item { font-size: 11px; color: var(--warn); }
-  .issue-item.error { color: var(--invalid); font-weight: 600; }
+/* Loading */
+.loading-bar{height:2px;background:var(--sf3);border-radius:2px;margin:18px 0;overflow:hidden;display:none}
+.loading-bar.active{display:block}
+.loading-fill{height:100%;width:40%;background:linear-gradient(90deg,var(--vl),var(--bl));border-radius:2px;animation:lds 1.3s ease-in-out infinite alternate}
+@keyframes lds{from{margin-left:0}to{margin-left:60%}}
 
-  .filter-tabs { display: flex; gap: 6px; margin-bottom: 15px; }
-  .tab { padding: 5px 13px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
-  .tab.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:22px}
+.stat-card{background:var(--sfc);border:1px solid var(--bd);border-radius:var(--r);padding:15px 16px;transition:border-color .2s}
+.stat-card:hover{border-color:var(--sf3)}
+.stat-ico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:10px}
+.stat-card.total .stat-ico{background:var(--sf3)}
+.stat-card.susp  .stat-ico{background:var(--gog)}
+.stat-card.cln   .stat-ico{background:var(--vlg)}
+.stat-card.geo   .stat-ico{background:var(--blg)}
+.stat-lbl{font-size:10px;font-family:var(--mn);color:var(--tm);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.stat-val{font-size:28px;font-weight:700;line-height:1;margin-bottom:3px;letter-spacing:-1px}
+.stat-card.total .stat-val{color:var(--tx)}
+.stat-card.susp  .stat-val{color:var(--go)}
+.stat-card.cln   .stat-val{color:var(--vll)}
+.stat-card.geo   .stat-val{color:var(--bl)}
+.stat-sub{font-size:10.5px;color:var(--tm)}
 
-  /* BUTTONS */
-  .btn { padding: 8px 16px; border-radius: var(--radius); font-weight: 600; font-size: 13px; cursor: pointer; border: none; transition: all 0.14s; font-family: var(--font); }
-  .btn-primary { background: var(--brand); color: #fff; }
-  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-danger { background: var(--invalid-bg); color: var(--invalid); border: 1px solid #FECACA; }
+/* Toolbar */
+.tb2{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.tb2-title{font-size:13px;font-weight:600}
+.ftabs{display:flex;gap:4px}
+.tab{padding:5px 12px;border-radius:5px;font-size:11.5px;font-family:var(--mn);cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--tm);transition:all .13s;font-weight:500}
+.tab:hover{color:var(--tx);border-color:var(--sf3)}
+.tab.active{background:var(--vl);color:#fff;border-color:var(--vl)}
+.tab.wt.active{background:var(--go);color:#000;border-color:var(--go)}
+.tab.bt.active{background:var(--bl);color:#fff;border-color:var(--bl)}
 
-  .export-row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+/* Table */
+.tbl-wrap{background:var(--sfc);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.tbl-scroll{overflow-x:auto;max-height:490px;overflow-y:auto}
+table{width:100%;border-collapse:collapse}
+thead{position:sticky;top:0;z-index:2}
+th{background:var(--sf2);padding:10px 13px;text-align:left;font-family:var(--mn);font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:.8px;font-weight:500;white-space:nowrap;border-bottom:1px solid var(--bd)}
+td{padding:9px 13px;border-bottom:1px solid var(--bds);font-family:var(--mn);font-size:11.5px;white-space:nowrap;color:var(--ts)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(124,58,237,.04)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:600;font-family:var(--mn)}
+.bg{background:var(--gng);color:var(--gn)}
+.bgo{background:var(--gog);color:var(--go)}
+.bbl{background:var(--blg);color:var(--bl)}
+.dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dg{background:var(--gn)}
+.do{background:var(--go)}
+.dbl{background:var(--bl)}
+.issues-list{display:flex;flex-direction:column;gap:2px}
+.issue{font-size:10.5px;color:var(--go)}
+
+/* Pagination */
+.pgn{display:flex;align-items:center;justify-content:center;gap:5px;padding:11px;border-top:1px solid var(--bd)}
+.pb{width:26px;height:26px;border-radius:5px;background:transparent;border:1px solid var(--bd);color:var(--tm);cursor:pointer;font-family:var(--mn);font-size:11px;transition:all .12s;display:flex;align-items:center;justify-content:center}
+.pb:hover{border-color:var(--vl);color:var(--vll)}
+.pb.active{background:var(--vl);border-color:var(--vl);color:#fff;font-weight:700}
+.pb:disabled{opacity:.25;cursor:not-allowed}
+.pi{font-family:var(--mn);font-size:11px;color:var(--tm);padding:0 6px}
+.exp-row{display:flex;justify-content:flex-end;gap:7px;padding:12px 14px;border-top:1px solid var(--bd)}
+.btn{padding:7px 14px;border-radius:6px;font-family:var(--fn);font-weight:600;font-size:12px;cursor:pointer;border:none;transition:all .14s}
+.btn-p{background:var(--vl);color:#fff}
+.btn-p:hover{background:#6d28d9;transform:translateY(-1px)}
+.btn-g{background:transparent;color:var(--tm);border:1px solid var(--bd)}
+.btn-g:hover{border-color:var(--ts);color:var(--tx)}
+.empty{text-align:center;padding:60px 20px}
+.empty-ico{font-size:38px;margin-bottom:12px;opacity:.3}
+.empty h3{font-size:15px;font-weight:600;margin-bottom:5px}
+.empty p{font-size:12px;color:var(--tm)}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.crit-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.page{padding:16px}}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-logo"><div class="logo-mark">🚀</div> RocketLab</div>
-  <div class="topbar-sep"></div>
-  <div class="topbar-badge">AppsFlyer · Validación Step 5 & Completed</div>
-</div>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="lm">R</div>
+    <div>
+      <div class="name">Rocket Lab</div>
+      <div class="sub">Space · Analytics</div>
+    </div>
+  </div>
+  <div class="sb-sec">Analytics</div>
+  <div class="sb-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Overview</div>
+  <div class="sb-item active"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12L5 8l3 2 3-5 3 2"/></svg>Funnel Validator</div>
+  <div class="sb-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h7M3 12h5"/></svg>Data Exporter</div>
+  <div class="sb-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>KPI Monitoring</div>
+  <div class="sb-sec">Campaign</div>
+  <div class="sb-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="11" rx="1"/><path d="M5 3V2M11 3V2"/></svg>Orders</div>
+  <div class="sb-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h12M8 2v12"/></svg>Campaigns</div>
+  <div class="sb-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="8,2 14,14 2,14"/></svg>Offers</div>
+  <div class="sb-sec" style="margin-top:auto">Entities</div>
+  <div class="sb-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3 2-5 5-5s5 2 5 5"/><circle cx="12" cy="7" r="2"/><path d="M15 14c0-2-1-3-3-3"/></svg>Advertisers</div>
+  <div class="sb-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14V5l6-3 6 3v9"/><rect x="6" y="9" width="4" height="5"/></svg>Media Sources</div>
+</aside>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div class="sidebar-item active">📊 Funnel Validator</div>
-  </aside>
+<div class="main">
+  <header class="topbar">
+    <div class="tb-l">
+      <span>Analytics</span><span style="color:var(--bd)">/</span>
+      <span>Overview</span><span style="color:var(--bd)">/</span>
+      <span class="cur">Funnel Validator</span>
+    </div>
+    <div class="tb-r">
+      <div class="tb-pill"><span class="ldot"></span>Live mode</div>
+      <div class="tb-pill">AppsFlyer · Apertura de Cuenta</div>
+      <div class="avatar">FL</div>
+    </div>
+  </header>
 
-  <main class="main">
-    <div class="page-header">
-      <div class="page-title">Funnel Validator</div>
-      <button class="btn btn-primary" onclick="document.getElementById('csvInput').click()">+ Cargar CSV</button>
+  <div class="page">
+    <div class="page-hd">
+      <h1>Funnel Validator</h1>
+      <p>apertura_cuenta_en_linea — validación de pasos y verosimilitud</p>
     </div>
 
-    <div class="kpi-grid" id="statsSection" style="display:none">
-      <div class="kpi-card">
-        <div class="kpi-icon purple">📂</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Total IDs</div>
-          <div class="kpi-value" id="statTotal">0</div>
+    <!-- Funnel steps visual -->
+    <div class="sec-lbl" style="margin-bottom:12px">Pasos del funnel</div>
+    <div class="funnel-steps" style="margin-bottom:22px">
+      <div class="fstep">
+        <div class="fstep-inner">
+          <div class="fstep-num">PASO 1</div>
+          <div class="fstep-name">step_1</div>
         </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-icon green">✅</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Funnel Completo</div>
-          <div class="kpi-value" style="color:var(--valid)" id="statValidSteps">0</div>
+      <div class="fstep-arrow">→</div>
+      <div class="fstep">
+        <div class="fstep-inner">
+          <div class="fstep-num">PASO 2</div>
+          <div class="fstep-name">step_6</div>
         </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-icon red">✗</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Faltan Pasos</div>
-          <div class="kpi-value" style="color:var(--invalid)" id="statInvalidSteps">0</div>
+      <div class="fstep-arrow">→</div>
+      <div class="fstep">
+        <div class="fstep-inner">
+          <div class="fstep-num">PASO 3</div>
+          <div class="fstep-name">completed_aprobado</div>
         </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-icon amber">⚠️</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Alertas Geo</div>
-          <div class="kpi-value" style="color:var(--warn)" id="statSuspicious">0</div>
-        </div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon blue">💰</div>
-        <div class="kpi-body">
-          <div class="kpi-label">Facturables</div>
-          <div class="kpi-value" style="color:var(--brand)" id="statClean">0</div>
+      <div class="fstep-arrow">→</div>
+      <div class="fstep">
+        <div class="fstep-inner" style="border-color:var(--vl);background:var(--vlg)">
+          <div class="fstep-num" style="color:var(--vll)">FINAL ✓</div>
+          <div class="fstep-name" style="color:var(--vll)">completed_contratado</div>
         </div>
       </div>
     </div>
 
-    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvInput').click()">
-      <input type="file" accept=".csv" id="csvInput" style="display:none" />
-      <div class="upload-icon-wrap" style="font-size:30px; margin-bottom:10px">📂</div>
-      <h2>Arrastra tu archivo CSV aquí</h2>
-      <p>Análisis enfocado en Step 5 y Completed Contratado</p>
-      <div class="upload-hint">📎 AppsFlyer ID · Event Name · Event Time · City · State</div>
+    <div class="sec-lbl">Paso 1 — Cargar datos</div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" accept=".csv" id="csvInput"/>
+      <div class="uico">📂</div>
+      <h2>Arrastrá tu archivo CSV aquí</h2>
+      <p>o hacé clic para seleccionarlo</p>
+      <div class="uchips">
+        <span>AppsFlyer ID</span><span>Event Name</span><span>Event Time</span><span>City</span><span>State</span>
+      </div>
     </div>
 
-    <div id="resultsSection" style="display:none; margin-top:24px">
-      <div class="results-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
-        <div class="filter-tabs" style="margin-bottom:0">
-          <button class="tab active" onclick="setFilter('all', this)">Todos</button>
-          <button class="tab" onclick="setFilter('clean', this)">✅ Facturables</button>
-          <button class="tab" onclick="setFilter('invalid', this)">✗ Inválidos/Sospechosos</button>
+    <div id="criteriaPanel" style="display:none">
+      <div class="sec-lbl" style="margin-bottom:10px">Criterios de validación</div>
+      <div class="crit-grid">
+        <div class="crit-card">
+          <div class="crit-title">⏱ Temporales <span class="lock-pill">🔒 fijo</span></div>
+          <div class="crit-row"><div class="lbl">Tiempo mínimo entre pasos</div><div class="val">10 seg</div></div>
+          <div class="crit-row"><div class="lbl">Tiempo máximo entre pasos</div><div class="val">3 días</div></div>
+          <div class="crit-note">Menor a 10s = posible automatización. Más de 3 días = sesión abandonada o retomada.</div>
+        </div>
+        <div class="crit-card">
+          <div class="crit-title">📍 Geográficos <span class="lock-pill">🔒 fijo</span></div>
+          <div class="crit-row"><div class="lbl">Mínimo para cambio de ciudad</div><div class="val">60 min</div></div>
+          <div class="crit-row"><div class="lbl">Mínimo para cambio de estado</div><div class="val">120 min</div></div>
+          <div class="crit-note">Cambios de ubicación imposibles → posible VPN, farm de dispositivos o datos erróneos.</div>
         </div>
       </div>
-      
-      <div class="table-wrap">
-        <div class="table-scroll">
+    </div>
+
+    <div class="loading-bar" id="loadingBar"><div class="loading-fill"></div></div>
+
+    <div id="statsSection" style="display:none">
+      <div class="sec-lbl" style="margin-bottom:10px">Resumen</div>
+      <div class="stats-grid">
+        <div class="stat-card total"><div class="stat-ico">📋</div><div class="stat-lbl">Total IDs</div><div class="stat-val" id="statTotal">0</div><div class="stat-sub">con evento final</div></div>
+        <div class="stat-card cln"><div class="stat-ico">💠</div><div class="stat-lbl">Facturables</div><div class="stat-val" id="statClean">0</div><div class="stat-sub">pasos completos · sin alertas</div></div>
+        <div class="stat-card susp"><div class="stat-ico">⚠</div><div class="stat-lbl">Alerta timing</div><div class="stat-val" id="statSuspTime">0</div><div class="stat-sub">timing sospechoso</div></div>
+        <div class="stat-card geo"><div class="stat-ico">📍</div><div class="stat-lbl">Alerta geo</div><div class="stat-val" id="statSuspGeo">0</div><div class="stat-sub">ubicación inviable</div></div>
+      </div>
+
+      <div class="tb2">
+        <div class="tb2-title">Resultados por AppsFlyer ID</div>
+        <div class="ftabs">
+          <button class="tab active" onclick="setFilter('all',this)">Todos</button>
+          <button class="tab wt" onclick="setFilter('timing',this)">⚠ Alerta timing</button>
+          <button class="tab bt" onclick="setFilter('geo',this)">📍 Alerta geo</button>
+          <button class="tab" onclick="setFilter('clean',this)">✓ Facturables</button>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <div class="tbl-scroll">
           <table>
-            <thead>
-              <tr>
-                <th>AppsFlyer ID</th>
-                <th>Estado</th>
-                <th>Pasos Registrados</th>
-                <th>Ciudades detectadas</th>
-                <th>Problemas detectados</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>AppsFlyer ID</th>
+              <th>Clasificación</th>
+              <th>Pasos registrados</th>
+              <th>Tiempo total</th>
+              <th>Ciudades</th>
+              <th>Alertas</th>
+            </tr></thead>
             <tbody id="tableBody"></tbody>
           </table>
         </div>
-      </div>
-
-      <div class="export-row">
-        <button class="btn btn-ghost" onclick="exportCSV('all')">Exportar Todos</button>
-        <button class="btn btn-danger" onclick="exportCSV('invalid')">Exportar Inválidos</button>
-        <button class="btn btn-primary" onclick="exportCSV('clean')">Exportar Facturables</button>
+        <div class="pgn" id="paginationWrap"></div>
+        <div class="exp-row">
+          <button class="btn btn-g" onclick="exportCSV('all')">Exportar todos</button>
+          <button class="btn btn-g" onclick="exportCSV('alerts')">Exportar con alertas</button>
+          <button class="btn btn-p" onclick="exportCSV('clean')">Exportar facturables</button>
+        </div>
       </div>
     </div>
-  </main>
+
+    <div id="emptyState" style="display:none" class="empty">
+      <div class="empty-ico">🔍</div>
+      <h3>Sin resultados</h3>
+      <p>No se encontraron IDs con el evento de apertura de cuenta.</p>
+    </div>
+  </div>
 </div>
 
 <script>
+// ── CAMBIO 1: nuevo orden de pasos ──────────────────────────────────────────
 const STEPS = [
-  'af_apertura_cuenta_en_linea_no_cliente-app_step_5',
-  'af_apertura_cuenta_en_linea_no_cliente-app_completed_contratado'
+  'apertura_cuenta_en_linea_no_cliente-app_step_1',
+  'apertura_cuenta_en_linea_no_cliente-app_step_6',
+  'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado',
+  'apertura_cuenta_en_linea_no_cliente-app_completed_contratado'
 ];
-const CFG = { minCityTravel: 3600, minStateTravel: 7200 };
-let allResults = [];
+const FINAL = STEPS[3];
+const CFG = { minS:10, maxD:3, minCity:3600, minState:7200 };
 
-document.getElementById('csvInput').addEventListener('change', e => {
-  if (e.target.files[0]) {
-    Papa.parse(e.target.files[0], {
-      header: true,
-      skipEmptyLines: true,
-      complete: r => analyze(r.data)
-    });
-  }
-});
+let allR=[], filtR=[], curF='all', curP=1;
+const PS = 50;
 
-function analyze(rows) {
-  const byId = {};
-  rows.forEach(row => {
-    const id = row['AppsFlyer ID'] || row['appsflyer_id'] || '';
-    const event = row['Event Name'] || row['event_name'] || '';
-    if (!id || !event) return;
-    if (!byId[id]) byId[id] = [];
-    byId[id].push({
-      event: event.trim(),
-      time: new Date(row['Event Time'] || row['event_time']),
-      city: (row['City'] || '').trim().toLowerCase(),
-      state: (row['State'] || '').trim().toLowerCase()
-    });
+const uz = document.getElementById('uploadZone');
+const ci = document.getElementById('csvInput');
+uz.addEventListener('dragover', e=>{ e.preventDefault(); uz.classList.add('drag-over'); });
+uz.addEventListener('dragleave', ()=> uz.classList.remove('drag-over'));
+uz.addEventListener('drop', e=>{ e.preventDefault(); uz.classList.remove('drag-over'); if(e.dataTransfer.files[0]) pf(e.dataTransfer.files[0]); });
+ci.addEventListener('change', e=>{ if(e.target.files[0]) pf(e.target.files[0]); });
+
+function pf(file){
+  document.getElementById('criteriaPanel').style.display='block';
+  document.getElementById('loadingBar').classList.add('active');
+  document.getElementById('statsSection').style.display='none';
+  document.getElementById('emptyState').style.display='none';
+  Papa.parse(file,{ header:true, skipEmptyLines:true,
+    complete: r=>{ document.getElementById('loadingBar').classList.remove('active'); analyze(r.data); },
+    error: ()=>{ document.getElementById('loadingBar').classList.remove('active'); alert('Error al leer el CSV.'); }
   });
-
-  allResults = Object.entries(byId).map(([id, events]) => {
-    const issues = [];
-    const registered = STEPS.filter(s => events.some(e => e.event === s));
-    const missing = STEPS.filter(s => !registered.includes(s));
-    
-    if (missing.length > 0) {
-      issues.push({ type: 'error', msg: `Faltan pasos: ${missing.map(s => s.split('app_')[1]).join(', ')}` });
-    }
-
-    const sorted = events.sort((a, b) => a.time - b.time);
-    for (let i = 1; i < sorted.length; i++) {
-      const p = sorted[i-1], c = sorted[i];
-      const diff = (c.time - p.time) / 1000;
-      if (p.city && c.city && p.city !== c.city && diff < CFG.minCityTravel) {
-        issues.push({ type: 'warn', msg: `📍 Ciudad imposible: ${p.city} → ${c.city} en ${Math.round(diff/60)}m` });
-      }
-      if (p.state && c.state && p.state !== c.state && diff < CFG.minStateTravel) {
-        issues.push({ type: 'warn', msg: `🗺️ Estado imposible: ${p.state} → ${c.state} en ${Math.round(diff/60)}m` });
-      }
-    }
-
-    const hasError = missing.length > 0;
-    const hasWarn = issues.some(i => i.type === 'warn');
-    const status = hasError ? 'invalid' : (hasWarn ? 'suspicious' : 'clean');
-
-    return { id, status, isComplete: !hasError, hasGeoIssue: hasWarn, registered, issues, 
-             cities: [...new Set(events.map(e => e.city).filter(Boolean))] };
-  });
-
-  renderUI();
 }
 
-function renderUI() {
-  document.getElementById('statsSection').style.display = 'grid';
-  document.getElementById('resultsSection').style.display = 'block';
-  document.getElementById('uploadZone').style.display = 'none';
+function norm(n){ return n?.trim().toLowerCase().replace(/\s+/g,'_'); }
+function fc(row,...c){ const k=Object.keys(row); for(const x of c){ const f=k.find(z=>norm(z)===norm(x)); if(f) return row[f]; } return ''; }
+function pd(s){ if(!s) return null; const d=new Date(s.trim()); return isNaN(d)?null:d; }
 
-  const complete = allResults.filter(r => r.isComplete).length;
-  const suspicious = allResults.filter(r => r.isComplete && r.hasGeoIssue).length;
-
-  document.getElementById('statTotal').textContent = allResults.length;
-  document.getElementById('statValidSteps').textContent = complete;
-  document.getElementById('statInvalidSteps').textContent = allResults.length - complete;
-  document.getElementById('statSuspicious').textContent = suspicious;
-  document.getElementById('statClean').textContent = complete - suspicious;
-
-  setFilter('all');
+function analyze(rows){
+  const bi={};
+  for(const row of rows){
+    const id  = fc(row,'AppsFlyer ID','appsflyer_id','appsflyer id') || '';
+    const ev  = fc(row,'Event Name','event_name','eventname') || '';
+    if(!id||!ev) continue;
+    if(!bi[id]) bi[id]=[];
+    bi[id].push({
+      event: ev.trim(),
+      time:  pd(fc(row,'Event Time','event_time','eventtime')),
+      city:  (fc(row,'City','city')||'').trim().toLowerCase(),
+      state: (fc(row,'State','state')||'').trim().toLowerCase()
+    });
+  }
+  const res=[];
+  for(const [id,evs] of Object.entries(bi)){
+    if(!evs.some(e=>e.event===FINAL)) continue;
+    res.push(vi(id,evs));
+  }
+  allR=res;
+  if(!res.length){ document.getElementById('emptyState').style.display='block'; return; }
+  updStats(res);
+  setFilter(curF,null,true);
+  document.getElementById('statsSection').style.display='block';
 }
 
-function setFilter(f, btn) {
-  if (btn) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
+function vi(id,evs){
+  const issues=[];
+  const rs = STEPS.filter(s=>evs.some(e=>e.event===s));
+  // solo los pasos intermedios (no el final) son obligatorios para considerar facturable
+  const ms = STEPS.slice(0,-1).filter(s=>!rs.includes(s));
+
+  const fe = STEPS
+    .map(s=>evs.filter(e=>e.event===s).sort((a,b)=>(a.time||0)-(b.time||0))[0])
+    .filter(Boolean);
+
+  let hasTimingAlert=false, hasGeoAlert=false;
+
+  for(let i=1;i<fe.length;i++){
+    const p=fe[i-1], c=fe[i];
+    if(!p.time||!c.time) continue;
+    const d=(c.time-p.time)/1000;
+    const lb=`${sl(STEPS[i-1])} → ${sl(STEPS[i])}`;
+    if(d<0||d<CFG.minS||d>CFG.maxD*86400){
+      hasTimingAlert=true;
+      const msg = d<0 ? `⚡ Orden inverso: ${lb}`
+                : d<CFG.minS ? `⚡ Muy rápido (${Math.round(d)}s): ${lb}`
+                : `🐢 Muy lento (${Math.round(d/86400)}d): ${lb}`;
+      issues.push({t:'timing',m:msg});
+    }
+    if(p.city&&c.city&&p.city!==c.city&&d<CFG.minCity){
+      hasGeoAlert=true;
+      issues.push({t:'geo',m:`📍 Ciudad imposible: ${tc(p.city)} → ${tc(c.city)} en ${Math.round(d/60)}min`});
+    }
+    if(p.state&&c.state&&p.state!==c.state&&d<CFG.minState){
+      hasGeoAlert=true;
+      issues.push({t:'geo',m:`🗺 Estado imposible: ${tc(p.state)} → ${tc(c.state)} en ${Math.round(d/60)}min`});
+    }
   }
 
-  const filtered = f === 'all' ? allResults : 
-                 f === 'clean' ? allResults.filter(r => r.status === 'clean') : 
-                 allResults.filter(r => r.status !== 'clean');
+  // ── CAMBIO 2: sin inválidos. Status es clean, timing, geo o ambos ────────
+  let status = 'clean';
+  if(hasGeoAlert && hasTimingAlert) status='both';
+  else if(hasGeoAlert)   status='geo';
+  else if(hasTimingAlert) status='timing';
 
-  document.getElementById('tableBody').innerHTML = filtered.map(r => {
-    const bc = r.status === 'clean' ? 'badge-valid' : r.status === 'suspicious' ? 'badge-warn' : 'badge-invalid';
-    const bt = r.status === 'clean' ? 'Facturable' : r.status === 'suspicious' ? 'Sospechoso' : 'Inválido';
-    return `
-      <tr>
-        <td style="font-family:var(--mono); font-weight:600">${r.id}</td>
-        <td><span class="badge ${bc}"><span class="dot dot-${r.status}"></span>${bt}</span></td>
-        <td style="font-size:11px">${STEPS.map(s => r.registered.includes(s) ? '✅' : '❌').join(' ')}</td>
-        <td style="font-size:11px; color:var(--muted)">${r.cities.join(' → ')}</td>
-        <td><div class="issues-list">${r.issues.map(i => `<div class="issue-item ${i.type}">${i.msg}</div>`).join('') || '<span style="color:var(--valid)">Sin problemas</span>'}</div></td>
-      </tr>
-    `;
+  const ts=fe.filter(e=>e.time);
+  const tot=ts.length>=2?(ts[ts.length-1].time-ts[0].time):null;
+  const cities=[...new Set(fe.map(e=>e.city).filter(Boolean))];
+  return{id,status,rs,ms,issues,tot,cities};
+}
+
+function sl(s){ return s.split('-app_')[1]||s.slice(-25); }
+function tc(s){ return s.replace(/\b\w/g,c=>c.toUpperCase()); }
+
+function updStats(r){
+  document.getElementById('statTotal').textContent      = r.length;
+  document.getElementById('statClean').textContent      = r.filter(x=>x.status==='clean').length;
+  document.getElementById('statSuspTime').textContent   = r.filter(x=>x.status==='timing'||x.status==='both').length;
+  document.getElementById('statSuspGeo').textContent    = r.filter(x=>x.status==='geo'||x.status==='both').length;
+}
+
+// ── CAMBIO 2 (cont): filtros = todos | timing | geo | facturables ─────────
+function setFilter(f,btn,force=false){
+  if(f===curF&&!force) return;
+  curF=f; curP=1;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  filtR = f==='clean'   ? allR.filter(r=>r.status==='clean')
+        : f==='timing'  ? allR.filter(r=>r.status==='timing'||r.status==='both')
+        : f==='geo'     ? allR.filter(r=>r.status==='geo'||r.status==='both')
+        : allR;
+  renderTable();
+}
+
+function renderTable(){
+  const st=(curP-1)*PS, pg=filtR.slice(st,st+PS);
+  document.getElementById('tableBody').innerHTML=pg.map(r=>{
+    const cl = r.status==='clean'   ? ['bg','✓ Facturable','dg']
+             : r.status==='timing'  ? ['bgo','⚠ Timing','do']
+             : r.status==='geo'     ? ['bbl','📍 Geo','dbl']
+             :                        ['bgo','⚠ Timing + Geo','do'];
+    const sh=STEPS.map(s=>{
+      const d=r.rs.includes(s);
+      return`<span style="color:var(--${d?'gn':'tm'});margin-right:7px">${d?'✓':'·'} ${sl(s)}</span>`;
+    }).join('');
+    const ih=r.issues.length===0
+      ?'<span style="color:var(--gn);font-size:10.5px">Sin alertas</span>'
+      :r.issues.map(i=>`<div class="issue">${i.m}</div>`).join('');
+    return`<tr>
+      <td style="color:var(--tx);font-weight:500">${r.id}</td>
+      <td><span class="badge ${cl[0]}"><span class="dot ${cl[2]}"></span>${cl[1]}</span></td>
+      <td style="max-width:340px;white-space:normal;font-size:10.5px">${sh}</td>
+      <td>${r.tot!==null?fd(r.tot):'—'}</td>
+      <td style="max-width:170px;white-space:normal;font-size:10.5px">${r.cities.length?r.cities.map(tc).join(' → '):'—'}</td>
+      <td style="max-width:260px;white-space:normal"><div class="issues-list">${ih}</div></td>
+    </tr>`;
   }).join('');
+  renderPgn();
 }
 
-function exportCSV(which) {
-  let data = allResults;
-  if (which === 'clean') data = allResults.filter(r => r.status === 'clean');
-  if (which === 'invalid') data = allResults.filter(r => r.status !== 'clean');
+function fd(ms){
+  const s=Math.floor(ms/1000);
+  if(s<60)  return`${s}s`;
+  if(s<3600)return`${Math.floor(s/60)}m ${s%60}s`;
+  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);
+  return h<24?`${h}h ${m}m`:`${Math.floor(h/24)}d ${h%24}h`;
+}
 
-  const rows = [['AppsFlyer ID', 'Estado', 'Pasos OK', 'Ciudades', 'Problemas']];
-  data.forEach(r => {
-    rows.push([
-      r.id, 
-      r.status, 
-      r.registered.length + '/' + STEPS.length, 
-      r.cities.join(' > '), 
-      r.issues.map(i => i.msg).join(' | ')
-    ]);
+function renderPgn(){
+  const pages=Math.ceil(filtR.length/PS), w=document.getElementById('paginationWrap');
+  if(pages<=1){w.innerHTML='';return;}
+  let h=`<button class="pb" onclick="gp(${curP-1})" ${curP===1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=pages;i++){
+    if(pages>7&&Math.abs(i-curP)>2&&i!==1&&i!==pages){if(i===2||i===pages-1)h+=`<span class="pi">…</span>`;continue;}
+    h+=`<button class="pb ${i===curP?'active':''}" onclick="gp(${i})">${i}</button>`;
+  }
+  h+=`<button class="pb" onclick="gp(${curP+1})" ${curP===pages?'disabled':''}>›</button>`;
+  h+=`<span class="pi" style="margin-left:5px">${filtR.length} resultados</span>`;
+  w.innerHTML=h;
+}
+function gp(p){const pg=Math.ceil(filtR.length/PS);if(p<1||p>pg)return;curP=p;renderTable();}
+
+function exportCSV(w){
+  let d = w==='clean'  ? allR.filter(r=>r.status==='clean')
+        : w==='alerts' ? allR.filter(r=>r.status!=='clean')
+        : allR;
+  const rows=[['AppsFlyer ID','Clasificación','Pasos Registrados','Pasos Faltantes','Tiempo Total','Ciudades','Alertas']];
+  for(const r of d) rows.push([
+    r.id,
+    r.status,
+    r.rs.map(sl).join(' | '),
+    r.ms.map(sl).join(' | '),
+    r.tot!==null?fd(r.tot):'',
+    r.cities.map(tc).join(' > '),
+    r.issues.map(i=>i.m).join(' | ')
+  ]);
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),
+    download:`funnel_${w}_${new Date().toISOString().slice(0,10)}.csv`
   });
-
-  const csvContent = rows.map(e => e.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
-  const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.setAttribute("href", url);
-  link.setAttribute("download", `funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`);
-  link.click();
+  a.click(); URL.revokeObjectURL(a.href);
 }
 </script>
 </body>
