@@ -10,9 +10,12 @@
   :root {
     --bg:          #F4F5F7;
     --surface:     #FFFFFF;
+    --surface2:    #F8F9FB;
     --border:      #E4E6EB;
+    --border-soft: #ECEEF2;
     --brand:       #5B47E0;
     --brand-light: #EDE9FD;
+    --brand-mid:   #7C6EF5;
     --valid:       #16A34A;
     --valid-bg:    #DCFCE7;
     --invalid:     #DC2626;
@@ -20,7 +23,12 @@
     --warn:        #D97706;
     --warn-bg:     #FEF3C7;
     --text:        #111827;
+    --text-mid:    #374151;
     --muted:       #6B7280;
+    --muted-soft:  #9CA3AF;
+    --sidebar-w:   220px;
+    --topbar-bg:   #18181B;
+    --topbar-h:    48px;
     --font: 'DM Sans', sans-serif;
     --mono: 'DM Mono', monospace;
     --radius: 8px;
@@ -29,97 +37,169 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; display: flex; flex-direction: column; }
 
-  .topbar { background: #18181B; height: 48px; display: flex; align-items: center; padding: 0 20px; color: #fff; z-index: 100; }
-  .logo-mark { width: 26px; height: 26px; background: var(--brand); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 14px; }
-  
-  .layout { display: flex; flex: 1; }
-  .sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; }
-  .sidebar-item { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--muted); border-left: 2px solid transparent; }
-  .sidebar-item.active { background: var(--brand-light); color: var(--brand); border-left-color: var(--brand); }
+  /* TOPBAR */
+  .topbar { background: var(--topbar-bg); height: var(--topbar-h); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; z-index: 100; }
+  .topbar-logo { display: flex; align-items: center; gap: 8px; color: #fff; font-weight: 700; font-size: 15px; letter-spacing: -0.3px; }
+  .logo-mark { width: 26px; height: 26px; background: var(--brand); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .topbar-sep { flex: 1; }
+  .topbar-badge { font-size: 11px; font-family: var(--mono); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 20px; }
 
-  .main { flex: 1; padding: 28px 32px; overflow-x: hidden; }
+  /* LAYOUT */
+  .layout { display: flex; flex: 1; min-height: calc(100vh - var(--topbar-h)); }
+  .sidebar { width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; }
+  .sidebar-item { display: flex; align-items: center; gap: 9px; padding: 7px 16px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-left: 2px solid transparent; }
+  .sidebar-item.active { background: var(--brand-light); color: var(--brand); border-left-color: var(--brand); font-weight: 600; }
+
+  /* MAIN */
+  .main { flex: 1; padding: 28px 32px; overflow-x: hidden; min-width: 0; }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
+  .page-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+
+  /* KPI CARDS */
   .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
-  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; transition: box-shadow 0.15s; }
-  .kpi-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
-  .kpi-value { font-size: 24px; font-weight: 700; }
+  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px; }
+  .kpi-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .kpi-icon.purple { background: #EDE9FD; }
+  .kpi-icon.green  { background: #DCFCE7; }
+  .kpi-icon.red    { background: #FEE2E2; }
+  .kpi-icon.amber  { background: #FEF3C7; }
+  .kpi-icon.blue   { background: #DBEAFE; }
+  .kpi-body { flex: 1; min-width: 0; }
+  .kpi-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; }
+  .kpi-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; letter-spacing: -0.5px; }
 
-  .upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; cursor: pointer; background: #fff; }
+  /* UPLOAD */
+  .upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; cursor: pointer; background: var(--surface2); transition: all 0.18s; }
   .upload-zone:hover { border-color: var(--brand); background: var(--brand-light); }
-  
-  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-top: 20px; }
+  .upload-zone h2 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .upload-hint { margin-top: 16px; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-family: var(--mono); color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; }
+
+  /* TABLE */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .table-scroll { overflow-x: auto; max-height: 600px; overflow-y: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: #F8F9FB; padding: 12px; text-align: left; font-size: 11px; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
-  td { padding: 12px; border-bottom: 1px solid #ECEEF2; }
+  thead { position: sticky; top: 0; z-index: 2; }
+  th { background: var(--surface2); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border-soft); font-size: 12.5px; color: var(--text-mid); }
+  tr:hover td { background: var(--surface2); }
 
+  /* BADGES */
   .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-  .badge-valid { background: var(--valid-bg); color: var(--valid); }
+  .badge-valid   { background: var(--valid-bg);   color: var(--valid); }
   .badge-invalid { background: var(--invalid-bg); color: var(--invalid); }
-  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .badge-warn    { background: var(--warn-bg);    color: var(--warn); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .dot-valid   { background: var(--valid); }
+  .dot-invalid { background: var(--invalid); }
+  .dot-warn    { background: var(--warn); }
 
-  .filter-tabs { display: flex; gap: 8px; margin-bottom: 15px; }
-  .tab { padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid var(--border); background: #fff; }
+  .issues-list { display: flex; flex-direction: column; gap: 2px; }
+  .issue-item { font-size: 11px; color: var(--warn); }
+  .issue-item.error { color: var(--invalid); font-weight: 600; }
+
+  .filter-tabs { display: flex; gap: 6px; margin-bottom: 15px; }
+  .tab { padding: 5px 13px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
   .tab.active { background: var(--brand); color: #fff; border-color: var(--brand); }
-
-  .btn { padding: 10px 20px; border-radius: var(--radius); font-weight: 600; cursor: pointer; border: none; background: var(--brand); color: #fff; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo-mark">🚀</div> RocketLab — Funnel Validator
+  <div class="topbar-logo"><div class="logo-mark">🚀</div> RocketLab</div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-badge">AppsFlyer · Validación Step 5 & Completed</div>
 </div>
 
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-item active">📊 Validador</div>
+    <div class="sidebar-item active">📊 Funnel Validator</div>
   </aside>
 
   <main class="main">
+    <div class="page-header">
+      <div class="page-title">Funnel Validator</div>
+      <button class="btn" style="background:var(--brand); color:#fff; padding:8px 16px; border-radius:8px; cursor:pointer; border:none; font-weight:600" onclick="document.getElementById('csvInput').click()">+ Cargar CSV</button>
+    </div>
+
     <div class="kpi-grid" id="statsSection" style="display:none">
-      <div class="kpi-card"><div class="kpi-label">Total IDs</div><div class="kpi-value" id="statTotal">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Funnel OK</div><div class="kpi-value" style="color:var(--valid)" id="statValidSteps">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Faltan Pasos</div><div class="kpi-value" style="color:var(--invalid)" id="statInvalidSteps">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Geo Alert</div><div class="kpi-value" style="color:var(--warn)" id="statSuspicious">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Facturables</div><div class="kpi-value" style="color:var(--brand)" id="statClean">0</div></div>
+      <div class="kpi-card">
+        <div class="kpi-icon purple">📂</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Total IDs</div>
+          <div class="kpi-value" id="statTotal">0</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon green">✅</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Funnel Completo</div>
+          <div class="kpi-value" style="color:var(--valid)" id="statValidSteps">0</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon red">✗</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Faltan Pasos</div>
+          <div class="kpi-value" style="color:var(--invalid)" id="statInvalidSteps">0</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon amber">⚠️</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Alertas Geo</div>
+          <div class="kpi-value" style="color:var(--warn)" id="statSuspicious">0</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon blue">💰</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Facturables</div>
+          <div class="kpi-value" style="color:var(--brand)" id="statClean">0</div>
+        </div>
+      </div>
     </div>
 
-    <div id="uploadCard" class="upload-zone" onclick="document.getElementById('csvInput').click()">
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvInput').click()">
       <input type="file" accept=".csv" id="csvInput" style="display:none" />
-      <h2>Cargar CSV de AppsFlyer</h2>
-      <p>Se validarán Step 5 y Completed Contratado + Geolocalización</p>
+      <div class="upload-icon-wrap" style="font-size:30px; margin-bottom:10px">📂</div>
+      <h2>Arrastra tu archivo CSV aquí</h2>
+      <p>Se analizarán Step 5 y Completed Contratado</p>
+      <div class="upload-hint">📎 AppsFlyer ID · Event Name · Event Time · City · State</div>
     </div>
 
-    <div id="resultsSection" style="display:none">
+    <div id="resultsSection" style="display:none; margin-top:24px">
       <div class="filter-tabs">
         <button class="tab active" onclick="setFilter('all', this)">Todos</button>
         <button class="tab" onclick="setFilter('clean', this)">✅ Facturables</button>
-        <button class="tab" onclick="setFilter('invalid', this)">✗ Inválidos</button>
+        <button class="tab" onclick="setFilter('invalid', this)">✗ Inválidos/Sospechosos</button>
       </div>
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>AppsFlyer ID</th>
-              <th>Criterio 1 (Funnel)</th>
-              <th>Criterio 2 (Geo)</th>
-              <th>Pasos Registrados</th>
-              <th>Ciudades</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>AppsFlyer ID</th>
+                <th>Estado</th>
+                <th>Pasos Registrados</th>
+                <th>Ciudades detectadas</th>
+                <th>Problemas detectados</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </main>
 </div>
 
 <script>
-// ELIMINADO: af_apertura_cuenta_en_linea_no_cliente-app_page_visit
+// FUNNEL: Solo Step 5 y Completed
 const STEPS = [
   'af_apertura_cuenta_en_linea_no_cliente-app_step_5',
   'af_apertura_cuenta_en_linea_no_cliente-app_completed_contratado'
 ];
-const CFG = { minCityTravel: 3600, minStateTravel: 7200 }; // segundos
+const CFG = { minCityTravel: 3600, minStateTravel: 7200 };
 let allResults = [];
 
 document.getElementById('csvInput').addEventListener('change', e => {
@@ -142,32 +222,45 @@ function analyze(rows) {
     byId[id].push({
       event: event.trim(),
       time: new Date(row['Event Time'] || row['event_time']),
-      city: (row['City'] || '').toLowerCase(),
-      state: (row['State'] || '').toLowerCase()
+      city: (row['City'] || '').trim().toLowerCase(),
+      state: (row['State'] || '').trim().toLowerCase()
     });
   });
 
   allResults = Object.entries(byId).map(([id, events]) => {
-    // 1. Validar Funnel (Sin page_visit)
+    const issues = [];
     const registered = STEPS.filter(s => events.some(e => e.event === s));
-    const isComplete = registered.length === STEPS.length;
+    const missing = STEPS.filter(s => !registered.includes(s));
+    
+    // Validar Funnel (Criterio 1)
+    if (missing.length > 0) {
+      issues.push({ type: 'error', msg: `Faltan pasos: ${missing.map(s => s.split('app_')[1]).join(', ')}` });
+    }
 
-    // 2. Validar Geo
+    // Validar Geo (Criterio 2)
     const sorted = events.sort((a, b) => a.time - b.time);
-    let geoIssue = false;
     for (let i = 1; i < sorted.length; i++) {
       const p = sorted[i-1], c = sorted[i];
       const diff = (c.time - p.time) / 1000;
-      if (p.city && c.city && p.city !== c.city && diff < CFG.minCityTravel) geoIssue = true;
-      if (p.state && c.state && p.state !== c.state && diff < CFG.minStateTravel) geoIssue = true;
+      if (p.city && c.city && p.city !== c.city && diff < CFG.minCityTravel) {
+        issues.push({ type: 'warn', msg: `📍 Ciudad imposible: ${p.city} → ${c.city} en ${Math.round(diff/60)}m` });
+      }
+      if (p.state && c.state && p.state !== c.state && diff < CFG.minStateTravel) {
+        issues.push({ type: 'warn', msg: `🗺️ Estado imposible: ${p.state} → ${c.state} en ${Math.round(diff/60)}m` });
+      }
     }
+
+    const hasError = missing.length > 0;
+    const hasWarn = issues.some(i => i.type === 'warn');
+    const status = hasError ? 'invalid' : (hasWarn ? 'suspicious' : 'clean');
 
     return {
       id,
-      isComplete,
-      geoIssue,
-      status: !isComplete ? 'invalid' : (geoIssue ? 'suspicious' : 'clean'),
+      status,
+      isComplete: !hasError,
+      hasGeoIssue: hasWarn,
       registered,
+      issues,
       cities: [...new Set(events.map(e => e.city).filter(Boolean))]
     };
   });
@@ -178,16 +271,16 @@ function analyze(rows) {
 function renderUI() {
   document.getElementById('statsSection').style.display = 'grid';
   document.getElementById('resultsSection').style.display = 'block';
-  document.getElementById('uploadCard').style.display = 'none';
+  document.getElementById('uploadZone').style.display = 'none';
 
-  const comp = allResults.filter(r => r.isComplete).length;
-  const susp = allResults.filter(r => r.isComplete && r.geoIssue).length;
+  const complete = allResults.filter(r => r.isComplete).length;
+  const suspicious = allResults.filter(r => r.isComplete && r.hasGeoIssue).length;
 
   document.getElementById('statTotal').textContent = allResults.length;
-  document.getElementById('statValidSteps').textContent = comp;
-  document.getElementById('statInvalidSteps').textContent = allResults.length - comp;
-  document.getElementById('statSuspicious').textContent = susp;
-  document.getElementById('statClean').textContent = comp - susp;
+  document.getElementById('statValidSteps').textContent = complete;
+  document.getElementById('statInvalidSteps').textContent = allResults.length - complete;
+  document.getElementById('statSuspicious').textContent = suspicious;
+  document.getElementById('statClean').textContent = complete - suspicious;
 
   setFilter('all');
 }
@@ -200,17 +293,23 @@ function setFilter(f, btn) {
 
   const filtered = f === 'all' ? allResults : 
                  f === 'clean' ? allResults.filter(r => r.status === 'clean') : 
-                 allResults.filter(r => r.status === 'invalid');
+                 allResults.filter(r => r.status !== 'clean');
 
-  document.getElementById('tableBody').innerHTML = filtered.map(r => `
-    <tr>
-      <td style="font-family:var(--mono)">${r.id}</td>
-      <td><span class="badge ${r.isComplete ? 'badge-valid' : 'badge-invalid'}">${r.isComplete ? 'Completo' : 'Faltan Pasos'}</span></td>
-      <td><span class="badge ${r.geoIssue ? 'badge-warn' : 'badge-valid'}">${r.geoIssue ? 'Sospechoso' : 'Lógico'}</span></td>
-      <td>${STEPS.map(s => r.registered.includes(s) ? '✅' : '❌').join(' ')}</td>
-      <td style="font-size:11px; color:var(--muted)">${r.cities.join(' → ')}</td>
-    </tr>
-  `).join('');
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = filtered.map(r => {
+    const bc = r.status === 'clean' ? 'badge-valid' : r.status === 'suspicious' ? 'badge-warn' : 'badge-invalid';
+    const bt = r.status === 'clean' ? 'Facturable' : r.status === 'suspicious' ? 'Sospechoso' : 'Inválido';
+    
+    return `
+      <tr>
+        <td style="font-family:var(--mono); font-weight:600">${r.id}</td>
+        <td><span class="badge ${bc}"><span class="dot dot-${r.status}"></span>${bt}</span></td>
+        <td style="font-size:11px">${STEPS.map(s => r.registered.includes(s) ? '✅' : '❌').join(' ')}</td>
+        <td style="font-size:11px; color:var(--muted); max-width:150px">${r.cities.join(' → ')}</td>
+        <td><div class="issues-list">${r.issues.map(i => `<div class="issue-item ${i.type}">${i.msg}</div>`).join('') || '<span style="color:var(--valid)">Sin problemas</span>'}</div></td>
+      </tr>
+    `;
+  }).join('');
 }
 </script>
 </body>
