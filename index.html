@@ -78,7 +78,7 @@
 <div class="topbar">
   <div class="topbar-logo"><div class="logo-mark">🚀</div> RocketLab</div>
   <div class="topbar-sep"></div>
-  <div class="topbar-badge">AppsFlyer · Apertura de Cuenta · BBVA CO</div>
+  <div class="topbar-badge">step_6 + aprobado|contratado · BBVA CO</div>
 </div>
 <div class="layout">
   <aside class="sidebar">
@@ -121,7 +121,7 @@
       <div style="font-size:32px;margin-bottom:10px">📂</div>
       <h2>Arrastrá tu archivo aquí</h2>
       <p style="color:var(--muted);font-size:13px;margin-top:4px">CSV o TSV exportado de AppsFlyer</p>
-      <div class="upload-hint">step_6 · completed_aprobado · completed_contratado · Country CO</div>
+      <div class="upload-hint">step_6 obligatorio · completed_aprobado y/o contratado · Country CO</div>
     </div>
 
     <!-- Results -->
@@ -164,14 +164,20 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────────────────────────
+// step_1        → OPTIONAL (no penaliza si falta)
+// step_6        → OBLIGATORIO
+// completed_aprobado OR completed_contratado → al menos uno es OBLIGATORIO
+//   (pueden estar los dos, o solo uno, pero al menos uno tiene que estar)
 const OPTIONAL_STEPS = ['apertura_cuenta_en_linea_no_cliente-app_step_1'];
-const REQUIRED_STEPS = [
-  'apertura_cuenta_en_linea_no_cliente-app_step_6',
-  'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado',
-  'apertura_cuenta_en_linea_no_cliente-app_completed_contratado'
+const STEP_6         = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
+const COMPLETED_APROBADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
+const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
+const ALL_STEPS = [
+  ...OPTIONAL_STEPS,
+  STEP_6,
+  COMPLETED_APROBADO,
+  COMPLETED_CONTRATADO
 ];
-const ALL_STEPS   = [...OPTIONAL_STEPS, ...REQUIRED_STEPS];
-const FINAL_EVENT = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
 const REQUIRED_CC = 'CO';
 
 let allResults   = [];
@@ -278,25 +284,38 @@ function analyze(rows) {
     });
   });
 
-  // Only keep IDs that fired the final event
+  // Keep IDs that fired at least one of the two completed events
   allResults = Object.entries(byId)
-    .filter(([, evs]) => evs.some(e => e.event === FINAL_EVENT))
+    .filter(([, evs]) => evs.some(e => e.event === COMPLETED_APROBADO || e.event === COMPLETED_CONTRATADO))
     .map(([id, evs]) => {
-      const finalRow  = evs.find(e => e.event === FINAL_EVENT);
-      const country   = finalRow ? finalRow.country : '';
-      const validCC   = country === REQUIRED_CC;
+      // Use the last completed event fired (prefer contratado > aprobado for data extraction)
+      const finalRow = evs.find(e => e.event === COMPLETED_CONTRATADO)
+                    || evs.find(e => e.event === COMPLETED_APROBADO);
+      const country = finalRow ? finalRow.country : '';
+      const validCC = country === REQUIRED_CC;
 
-      const registered      = ALL_STEPS.filter(s => evs.some(e => e.event === s));
-      const missingRequired = REQUIRED_STEPS.filter(s => !registered.includes(s));
+      const registered = ALL_STEPS.filter(s => evs.some(e => e.event === s));
+
+      // Validation: step_6 must be present, and at least one completed event must be present
+      const missingStep6     = !registered.includes(STEP_6);
+      const hasAnyCompleted  = registered.includes(COMPLETED_APROBADO) || registered.includes(COMPLETED_CONTRATADO);
+      const missingRequired  = [
+        ...(missingStep6    ? [STEP_6] : []),
+        ...(!hasAnyCompleted ? ['completed_aprobado o completed_contratado'] : [])
+      ];
+
+      // Which completed events fired (for display)
+      const hasAprobado    = registered.includes(COMPLETED_APROBADO);
+      const hasContratado  = registered.includes(COMPLETED_CONTRATADO);
 
       const afContent = getAfContent(finalRow ? finalRow.value : '');
       const product   = classifyProduct(afContent);
 
-      const status = !validCC           ? 'excluded'
+      const status = !validCC              ? 'excluded'
                    : missingRequired.length ? 'missing'
-                   :                         'clean';
+                   :                          'clean';
 
-      return { id, status, country, registered, missingRequired, product, afContent };
+      return { id, status, country, registered, missingRequired, hasAprobado, hasContratado, product, afContent };
     });
 
   renderUI();
@@ -369,9 +388,16 @@ function renderTable() {
       const done = r.registered.includes(s);
       const opt  = OPTIONAL_STEPS.includes(s);
       const lbl  = s.split('-app_')[1] || s;
-      const col  = done ? 'var(--valid)' : (opt ? 'var(--muted-soft)' : 'var(--invalid)');
-      const icon = done ? '✓' : (opt ? '·' : '✗');
-      const suf  = opt && !done ? ' <em style="font-size:9px;opacity:.55">(opc.)</em>' : '';
+      // For the two completed events: green if done, gray if not done (but not an error if the other one is present)
+      const isCompleted = (s === COMPLETED_APROBADO || s === COMPLETED_CONTRATADO);
+      const otherCompleted = isCompleted && (r.hasAprobado || r.hasContratado);
+      const col  = done ? 'var(--valid)'
+                 : (opt || (isCompleted && otherCompleted)) ? 'var(--muted-soft)'
+                 : 'var(--invalid)';
+      const icon = done ? '✓' : (opt || (isCompleted && otherCompleted)) ? '·' : '✗';
+      const suf  = opt && !done ? ' <em style="font-size:9px;opacity:.55">(opc.)</em>'
+                 : isCompleted && !done && otherCompleted ? ' <em style="font-size:9px;opacity:.55">(no pasó)</em>'
+                 : '';
       return `<span style="color:${col};margin-right:7px;font-size:11px">${icon} ${lbl}${suf}</span>`;
     }).join('');
 
