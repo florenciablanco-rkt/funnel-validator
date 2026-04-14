@@ -3,365 +3,693 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Funnel Validator — BBVA CO</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>BBVA CO — Funnel Validator + Credits</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
-  :root {
-    --bg:#F4F5F7;--surface:#FFFFFF;--surface2:#F8F9FB;--border:#E4E6EB;--border-soft:#ECEEF2;
-    --brand:#5B47E0;--brand-light:#EDE9FD;
-    --valid:#16A34A;--valid-bg:#DCFCE7;--invalid:#DC2626;--invalid-bg:#FEE2E2;
-    --warn:#D97706;--warn-bg:#FEF3C7;
-    --blue:#1D4ED8;--blue-bg:#DBEAFE;
-    --text:#111827;--text-mid:#374151;--muted:#6B7280;--muted-soft:#9CA3AF;
-    --sidebar-w:220px;--topbar-bg:#18181B;--topbar-h:48px;
-    --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--radius:8px;--radius-lg:12px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;display:flex;flex-direction:column}
-  .topbar{background:var(--topbar-bg);height:var(--topbar-h);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
-  .topbar-logo{display:flex;align-items:center;gap:8px;color:#fff;font-weight:700;font-size:15px;letter-spacing:-0.3px}
-  .logo-mark{width:26px;height:26px;background:var(--brand);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
-  .topbar-sep{flex:1}
-  .topbar-badge{font-size:11px;font-family:var(--mono);color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.15);padding:3px 10px;border-radius:20px}
-  .layout{display:flex;flex:1;min-height:calc(100vh - var(--topbar-h))}
-  .sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);padding:20px 0}
-  .sidebar-item{display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-left:2px solid transparent}
-  .sidebar-item.active{background:var(--brand-light);color:var(--brand);border-left-color:var(--brand);font-weight:600}
-  .main{flex:1;padding:28px 32px;overflow-x:hidden;min-width:0}
-  .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
-  .page-title{font-size:22px;font-weight:700;letter-spacing:-0.4px}
-  .kpi-section{margin-bottom:24px;display:flex;flex-direction:column;gap:14px}
-  .kpi-row-label{font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px}
-  .kpi-grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-  .kpi-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:flex-start;gap:10px}
-  .kpi-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-  .kpi-icon.purple{background:#EDE9FD}.kpi-icon.green{background:#DCFCE7}.kpi-icon.amber{background:#FEF3C7}
-  .kpi-icon.blue{background:#DBEAFE}.kpi-icon.red{background:#FEE2E2}.kpi-icon.indigo{background:#E0E7FF}
-  .kpi-body{flex:1;min-width:0}
-  .kpi-label{font-size:10.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px}
-  .kpi-value{font-size:24px;font-weight:700;line-height:1;letter-spacing:-0.5px}
-  .upload-zone{border:1.5px dashed var(--border);border-radius:var(--radius-lg);padding:40px;text-align:center;cursor:pointer;background:var(--surface2);transition:all 0.18s}
-  .upload-zone:hover,.upload-zone.drag-over{border-color:var(--brand);background:var(--brand-light)}
-  .upload-zone h2{font-size:15px;font-weight:600;margin-bottom:6px}
-  .upload-hint{margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:6px 14px;border-radius:20px}
-  .tabs-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-  .tab-group{display:flex;gap:4px}
-  .tab{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all 0.12s}
-  .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-  .tab-sep{width:1px;background:var(--border);align-self:stretch;margin:0 6px}
-  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
-  .table-scroll{overflow-x:auto;max-height:480px;overflow-y:auto}
-  table{width:100%;border-collapse:collapse}
-  thead{position:sticky;top:0;z-index:2}
-  th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.7px;border-bottom:1px solid var(--border)}
-  td{padding:9px 13px;border-bottom:1px solid var(--border-soft);font-size:12px;color:var(--text-mid);vertical-align:middle}
-  tr:hover td{background:var(--surface2)}
-  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
-  .bv{background:var(--valid-bg);color:var(--valid)}
-  .bw{background:var(--warn-bg);color:var(--warn)}
-  .bi{background:var(--invalid-bg);color:var(--invalid)}
-  .bb{background:var(--blue-bg);color:var(--blue)}
-  .bn{background:#E0E7FF;color:#3730A3}
-  .dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0}
-  .export-row{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap}
-  .btn{padding:7px 14px;border-radius:var(--radius);font-weight:600;font-size:12.5px;cursor:pointer;border:none;font-family:var(--font)}
-  .btn-primary{background:var(--brand);color:#fff}
-  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
-  .msg{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:14px;display:none}
-  .msg-error{background:var(--invalid-bg);border:1px solid #FECACA;color:var(--invalid)}
-  .msg-info{background:var(--blue-bg);border:1px solid #BFDBFE;color:var(--blue)}
+:root {
+  --rl-sidebar-bg:#14131a;--rl-sidebar-hover:#1e1d28;--rl-sidebar-active:#252336;
+  --rl-sidebar-text:#9997b3;--rl-sidebar-text-active:#ffffff;--rl-sidebar-section:#5a5878;
+  --rl-sidebar-width:220px;
+  --rl-content-bg:#f0eff5;--rl-card-bg:#ffffff;--rl-card-border:#e4e2ee;
+  --rl-card-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --rl-text-primary:#1a1927;--rl-text-secondary:#6b6887;--rl-text-muted:#9997b3;
+  --rl-header-bg:#ffffff;--rl-header-border:#e4e2ee;
+  --rl-accent-purple:#7c3aed;--rl-accent-purple-bg:#f5f3ff;
+  --rl-valid:#059669;--rl-valid-bg:#ecfdf5;
+  --rl-invalid:#dc2626;--rl-invalid-bg:#fef2f2;
+  --rl-warn:#d97706;--rl-warn-bg:#fffbeb;
+  --font:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--rl-content-bg);color:var(--rl-text-primary);font-family:var(--font);min-height:100vh;display:flex}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--rl-sidebar-width);background:var(--rl-sidebar-bg);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100}
+.sidebar-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
+.sidebar-logo-mark{width:28px;height:28px;background:var(--rl-accent-purple);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sidebar-logo-text{color:#fff;font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.sidebar-logo-sub{color:var(--rl-sidebar-text);font-size:10.5px;margin-top:1px}
+.sidebar-section{padding:16px 16px 6px;font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--rl-sidebar-section)}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:8px 16px;color:var(--rl-sidebar-text);font-size:12.5px;cursor:pointer;transition:background 0.1s,color 0.1s;border:none;background:none;width:100%;text-align:left}
+.sidebar-item:hover{background:var(--rl-sidebar-hover);color:#fff}
+.sidebar-item.active{background:var(--rl-sidebar-active);color:#fff;font-weight:500}
+.sidebar-item .si-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+
+/* ── Layout ── */
+.app-body{margin-left:var(--rl-sidebar-width);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── Topbar ── */
+.topbar{background:var(--rl-header-bg);border-bottom:1px solid var(--rl-header-border);height:52px;display:flex;align-items:center;padding:0 24px;gap:8px;position:sticky;top:0;z-index:50;flex-shrink:0}
+.topbar-crumb{font-size:12px;color:var(--rl-text-muted)}
+.topbar-crumb-sep{color:var(--rl-text-muted);font-size:12px}
+.topbar-crumb-active{font-size:12px;color:var(--rl-text-primary);font-weight:500}
+.topbar-sep{flex:1}
+.topbar-badge{font-size:11px;background:var(--rl-accent-purple-bg);color:var(--rl-accent-purple);border:1px solid #ddd6fe;padding:3px 10px;border-radius:4px;font-weight:500}
+.avatar{width:30px;height:30px;background:var(--rl-accent-purple);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+
+/* ── Content ── */
+.content{padding:24px;flex:1}
+.page{display:none}
+.page.active{display:block}
+.page-title{font-size:20px;font-weight:700;letter-spacing:-0.4px;color:var(--rl-text-primary)}
+.page-subtitle{font-size:12.5px;color:var(--rl-text-secondary);margin-top:3px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+
+/* ── Section labels ── */
+.section-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--rl-text-muted);margin-bottom:8px;margin-top:20px}
+.section-label:first-child{margin-top:0}
+
+/* ── Cards ── */
+.card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow)}
+
+/* ── KPI Grid ── */
+.kpi-grid{display:grid;gap:12px;margin-bottom:20px}
+.kpi-grid-5{grid-template-columns:repeat(5,1fr)}
+.kpi-grid-4{grid-template-columns:repeat(4,1fr)}
+.kpi-grid-3{grid-template-columns:repeat(3,1fr)}
+.kpi-grid-2{grid-template-columns:repeat(2,1fr)}
+.kpi-card{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);padding:14px 16px;border-top:3px solid transparent}
+.kpi-card.accent-green{border-top-color:var(--rl-valid)}
+.kpi-card.accent-red{border-top-color:var(--rl-invalid)}
+.kpi-card.accent-amber{border-top-color:var(--rl-warn)}
+.kpi-card.accent-purple{border-top-color:var(--rl-accent-purple)}
+.kpi-card.accent-blue{border-top-color:#2563eb}
+.kpi-card.accent-gray{border-top-color:#e4e2ee}
+.kpi-label{font-size:10.5px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px}
+.kpi-value{font-size:24px;font-weight:700;line-height:1;letter-spacing:-0.5px;color:var(--rl-text-primary)}
+.kpi-sub{font-size:11px;color:var(--rl-text-muted);margin-top:3px}
+
+/* ── Tables ── */
+.table-wrap{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);overflow:hidden;margin-bottom:14px}
+.table-scroll{overflow-x:auto;max-height:480px;overflow-y:auto}
+table{width:100%;border-collapse:collapse}
+thead{position:sticky;top:0;z-index:2}
+th{background:#f0eff5;padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--rl-text-muted);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--rl-card-border);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid #f5f3fb;font-size:12px;color:var(--rl-text-primary);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf9ff}
+
+/* ── Badges ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
+.bv{background:var(--rl-valid-bg);color:var(--rl-valid)}
+.bw{background:var(--rl-warn-bg);color:var(--rl-warn)}
+.bi{background:var(--rl-invalid-bg);color:var(--rl-invalid)}
+.bp{background:var(--rl-accent-purple-bg);color:var(--rl-accent-purple)}
+.bb{background:#eff6ff;color:#2563eb}
+.bn{background:#e0e7ff;color:#3730a3}
+
+/* ── Buttons ── */
+.btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:opacity 0.15s}
+.btn:hover{opacity:0.88}
+.btn-primary{background:var(--rl-accent-purple);color:#fff}
+.btn-secondary{background:#fff;color:var(--rl-text-secondary);border:1px solid var(--rl-card-border)}
+
+/* ── Filter tabs ── */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filter-tabs{display:flex;gap:3px;background:#f0eff5;border-radius:6px;padding:3px}
+.tab{padding:4px 11px;border-radius:4px;font-size:11.5px;font-weight:500;background:transparent;color:var(--rl-text-secondary);border:none;cursor:pointer;font-family:var(--font);transition:all 0.1s}
+.tab.active{background:#fff;color:var(--rl-text-primary);box-shadow:0 1px 2px rgba(0,0,0,0.08)}
+.filter-sep{width:1px;background:var(--rl-card-border);align-self:stretch;margin:0 4px}
+
+/* ── Upload zone ── */
+.upload-zone{border:1.5px dashed var(--rl-card-border);border-radius:8px;padding:40px;text-align:center;cursor:pointer;background:#faf9ff;transition:all 0.18s}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--rl-accent-purple);background:var(--rl-accent-purple-bg)}
+.upload-zone h2{font-size:15px;font-weight:600;margin-bottom:5px;color:var(--rl-text-primary)}
+.upload-zone p{font-size:12.5px;color:var(--rl-text-secondary)}
+.upload-hint{margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:monospace;color:var(--rl-text-muted);background:#fff;border:1px solid var(--rl-card-border);padding:5px 14px;border-radius:20px}
+
+/* ── Messages ── */
+.msg{padding:10px 14px;border-radius:6px;font-size:12.5px;margin-bottom:12px;display:none}
+.msg-error{background:var(--rl-invalid-bg);border:1px solid #fecaca;color:var(--rl-invalid)}
+.msg-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
+
+/* ── Credits form ── */
+.credits-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.credits-group{background:var(--rl-card-bg);border:1px solid var(--rl-card-border);border-radius:8px;box-shadow:var(--rl-card-shadow);padding:16px}
+.credits-group-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--rl-text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.credits-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.credits-row:last-child{margin-bottom:0}
+.credits-label{font-size:12.5px;color:var(--rl-text-primary);flex:1;font-weight:500}
+.credits-sublabel{font-size:10.5px;color:var(--rl-text-muted);display:block;margin-top:1px;font-weight:400}
+.credits-input-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.credits-input{width:140px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;color:var(--rl-text-primary);background:#fff;text-align:right}
+.credits-input:focus{outline:none;border-color:var(--rl-accent-purple);box-shadow:0 0 0 2px rgba(124,58,237,0.1)}
+.credits-input:disabled{background:#f5f3fb;color:var(--rl-text-muted);cursor:not-allowed}
+.credits-result{width:90px;padding:6px 10px;border-radius:6px;border:1px solid var(--rl-card-border);font-size:12.5px;font-family:monospace;font-weight:700;text-align:right;background:#f5f3fb;color:var(--rl-accent-purple)}
+.credits-rate{font-size:10.5px;color:var(--rl-text-muted);white-space:nowrap;flex-shrink:0;min-width:120px}
+.credits-divider{height:1px;background:var(--rl-card-border);margin:10px 0}
+.credits-total-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--rl-accent-purple-bg);border-radius:6px;margin-top:4px}
+.credits-total-label{font-size:13px;font-weight:600;color:var(--rl-accent-purple)}
+.credits-total-value{font-size:22px;font-weight:700;color:var(--rl-accent-purple);letter-spacing:-0.5px;font-family:monospace}
+.credits-warning{font-size:11px;color:var(--rl-invalid);background:var(--rl-invalid-bg);border:1px solid #fecaca;padding:5px 10px;border-radius:4px;margin-top:6px;display:none}
+.criteria-info{background:#f0eff5;border:1px solid var(--rl-card-border);border-radius:6px;padding:10px 14px;font-size:11.5px;color:var(--rl-text-secondary);line-height:1.7;margin-bottom:16px}
+.criteria-info strong{color:var(--rl-text-primary)}
+
+/* ── Export row ── */
+.export-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .kpi-grid-5,.kpi-grid-4{grid-template-columns:repeat(2,1fr)}
+  .credits-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="topbar-logo"><div class="logo-mark">🚀</div> RocketLab</div>
-  <div class="topbar-sep"></div>
-  <div class="topbar-badge">step_6 + aprobado|contratado · BBVA CO</div>
-</div>
-<div class="layout">
-  <aside class="sidebar">
-    <div class="sidebar-item active">📊 Funnel Validator</div>
-  </aside>
-  <main class="main">
-    <div class="page-header">
-      <div class="page-title">Funnel Validator — BBVA Colombia</div>
-      <button class="btn btn-primary" onclick="document.getElementById('csvInput').click()">+ Cargar archivo</button>
+
+<!-- ── Sidebar ────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">🚀</div>
+    <div>
+      <div class="sidebar-logo-text">RocketLab</div>
+      <div class="sidebar-logo-sub">BBVA Colombia</div>
+    </div>
+  </div>
+  <div class="sidebar-section">Herramientas</div>
+  <button class="sidebar-item active" onclick="showPage('validator',this)">
+    <span class="si-icon">🔍</span> Funnel Validator
+  </button>
+  <button class="sidebar-item" onclick="showPage('credits',this)">
+    <span class="si-icon">💎</span> Calculadora de Créditos
+  </button>
+</aside>
+
+<!-- ── App body ───────────────────────────────────────── -->
+<div class="app-body">
+  <div class="topbar">
+    <span class="topbar-crumb">BBVA CO</span>
+    <span class="topbar-crumb-sep">/</span>
+    <span class="topbar-crumb-active" id="topbarActive">Funnel Validator</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-badge" id="topbarBadge">step_6 + aprobado|contratado</span>
+    <div class="avatar">RL</div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════════════════════════════════════
+         PAGE: FUNNEL VALIDATOR
+    ══════════════════════════════════════════════════ -->
+    <div class="page active" id="page-validator">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Funnel Validator</div>
+          <div class="page-subtitle">Validación de apertura de cuenta · BBVA Colombia</div>
+        </div>
+        <button class="btn btn-primary" onclick="document.getElementById('csvInput').click()">+ Cargar archivo</button>
+      </div>
+
+      <div class="msg msg-error" id="msgError"></div>
+      <div class="msg msg-info"  id="msgInfo"></div>
+
+      <!-- Criterios fijos -->
+      <div class="criteria-info">
+        <strong>Criterios de validación (fijos):</strong><br>
+        · <strong>step_6</strong> obligatorio — <strong>completed_aprobado</strong> y/o <strong>completed_contratado</strong> al menos uno requerido<br>
+        · <strong>País:</strong> solo registros con Country Code = CO son facturables<br>
+        · <strong>Geografía:</strong> cambio de ciudad en menos de 3–8 min → geográficamente imposible → excluido<br>
+        · <strong>Múltiples completaciones:</strong> más de 2 veces el mismo producto → descartado
+      </div>
+
+      <!-- KPIs -->
+      <div id="statsSection" style="display:none">
+        <div class="section-label">Resumen global</div>
+        <div class="kpi-grid kpi-grid-5" style="margin-bottom:12px">
+          <div class="kpi-card accent-gray"><div class="kpi-label">Total IDs</div><div class="kpi-value" id="sTotal">0</div></div>
+          <div class="kpi-card accent-green"><div class="kpi-label">Facturables</div><div class="kpi-value" style="color:var(--rl-valid)" id="sClean">0</div></div>
+          <div class="kpi-card accent-amber"><div class="kpi-label">Pasos faltantes</div><div class="kpi-value" style="color:var(--rl-warn)" id="sMissing">0</div></div>
+          <div class="kpi-card accent-red"><div class="kpi-label">Excluidos</div><div class="kpi-value" style="color:var(--rl-invalid)" id="sExcluded">0</div></div>
+          <div class="kpi-card accent-purple"><div class="kpi-label">% Facturable</div><div class="kpi-value" style="color:var(--rl-accent-purple)" id="sPct">0%</div></div>
+        </div>
+        <div class="section-label">Por producto (solo facturables)</div>
+        <div class="kpi-grid kpi-grid-3" style="margin-bottom:20px">
+          <div class="kpi-card accent-purple"><div class="kpi-label">Cuenta Digital (libreton)</div><div class="kpi-value" style="color:var(--rl-accent-purple)" id="sLibreton">0</div></div>
+          <div class="kpi-card accent-blue"><div class="kpi-label">Nómina</div><div class="kpi-value" style="color:#2563eb" id="sNomina">0</div></div>
+          <div class="kpi-card accent-amber"><div class="kpi-label">Otro / Sin clasificar</div><div class="kpi-value" style="color:var(--rl-warn)" id="sOther">0</div></div>
+        </div>
+      </div>
+
+      <!-- Upload -->
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" accept=".csv,.tsv,.txt" id="csvInput" style="display:none"/>
+        <div style="font-size:32px;margin-bottom:10px">📂</div>
+        <h2>Arrastrá tu archivo aquí</h2>
+        <p>CSV o TSV exportado de AppsFlyer</p>
+        <div class="upload-hint">AppsFlyer ID · Event Name · Event Time · City · State · Country Code · Event Value</div>
+      </div>
+
+      <!-- Results -->
+      <div id="resultsSection" style="display:none;margin-top:4px">
+        <div class="filter-bar">
+          <div class="filter-tabs" id="statusTabs">
+            <button class="tab active" onclick="setFilter('all','status',this)">Todos</button>
+            <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
+            <button class="tab" onclick="setFilter('missing','status',this)">⚠ Pasos faltantes</button>
+            <button class="tab" onclick="setFilter('geo','status',this)">📍 Alerta geo</button>
+            <button class="tab" onclick="setFilter('dup','status',this)">🔁 Duplicados</button>
+            <button class="tab" onclick="setFilter('excluded','status',this)">❌ Excluidos</button>
+          </div>
+          <div class="filter-sep"></div>
+          <div class="filter-tabs" id="productTabs">
+            <button class="tab active" onclick="setFilter('all','product',this)">Todos</button>
+            <button class="tab" onclick="setFilter('libreton','product',this)">📘 Cuenta Digital</button>
+            <button class="tab" onclick="setFilter('nomina','product',this)">💼 Nómina</button>
+            <button class="tab" onclick="setFilter('other','product',this)">❓ Otro</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead><tr>
+                <th>AppsFlyer ID</th><th>Estado</th><th>Producto</th>
+                <th>Pasos registrados</th><th>País</th><th>Razón exclusión</th><th>af_content</th>
+              </tr></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="export-row">
+          <button class="btn btn-secondary" onclick="exportCSV('all')">Exportar Todos</button>
+          <button class="btn btn-secondary" onclick="exportCSV('libreton')">Exportar Cuenta Digital</button>
+          <button class="btn btn-secondary" onclick="exportCSV('nomina')">Exportar Nómina</button>
+          <button class="btn btn-primary"   onclick="exportCSV('clean')">Exportar Facturables</button>
+        </div>
+      </div>
     </div>
 
-    <div class="msg msg-error" id="msgError"></div>
-    <div class="msg msg-info"  id="msgInfo"></div>
-
-    <!-- KPIs -->
-    <div class="kpi-section" id="statsSection" style="display:none">
-      <div>
-        <div class="kpi-row-label">Global</div>
-        <div class="kpi-grid-5">
-          <div class="kpi-card"><div class="kpi-icon purple">📂</div><div class="kpi-body"><div class="kpi-label">Total IDs</div><div class="kpi-value" id="sTotal">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon green">✅</div><div class="kpi-body"><div class="kpi-label">Facturables</div><div class="kpi-value" style="color:var(--valid)" id="sClean">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon amber">⚠️</div><div class="kpi-body"><div class="kpi-label">Pasos faltantes</div><div class="kpi-value" style="color:var(--warn)" id="sMissing">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon red">❌</div><div class="kpi-body"><div class="kpi-label">Excluidos (no CO)</div><div class="kpi-value" style="color:var(--invalid)" id="sExcluded">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon blue">💰</div><div class="kpi-body"><div class="kpi-label">% Facturable</div><div class="kpi-value" style="color:var(--brand)" id="sPct">0%</div></div></div>
+    <!-- ══════════════════════════════════════════════════
+         PAGE: CALCULADORA DE CRÉDITOS
+    ══════════════════════════════════════════════════ -->
+    <div class="page" id="page-credits">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Calculadora de Créditos</div>
+          <div class="page-subtitle">AppsFlyer MMP — BBVA Colombia</div>
         </div>
+        <button class="btn btn-secondary" onclick="resetCredits()">Limpiar</button>
       </div>
-      <div>
-        <div class="kpi-row-label">Por Producto (solo facturables)</div>
-        <div class="kpi-grid-3">
-          <div class="kpi-card"><div class="kpi-icon indigo">📘</div><div class="kpi-body"><div class="kpi-label">Cuenta Digital (libreton)</div><div class="kpi-value" style="color:#3730A3" id="sLibreton">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon blue">💼</div><div class="kpi-body"><div class="kpi-label">Nómina</div><div class="kpi-value" style="color:var(--blue)" id="sNomina">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icon amber">❓</div><div class="kpi-body"><div class="kpi-label">Otro / Sin clasificar</div><div class="kpi-value" style="color:var(--warn)" id="sOther">0</div></div></div>
+
+      <div class="criteria-info">
+        <strong>Regla de cálculo:</strong> créditos = cantidad × tasa / 1,000,000 &nbsp;·&nbsp;
+        <strong>Events</strong> incluye absolutamente todos los eventos que dispara el MMP &nbsp;·&nbsp;
+        <strong>Key Events</strong> son los que terminan en <code>_contratado</code> o <code>_finalizado</code>
+      </div>
+
+      <div class="credits-grid">
+        <!-- Columna izquierda: métricas de volumen -->
+        <div class="credits-group">
+          <div class="credits-group-title">📊 Métricas de volumen</div>
+
+          <!-- Clicks -->
+          <div class="credits-row">
+            <div class="credits-label">
+              Clicks
+              <span class="credits-sublabel">Máx. 30,000,000</span>
+            </div>
+            <div class="credits-input-wrap">
+              <input class="credits-input" type="number" id="inp_clicks" min="0" max="30000000" placeholder="0" oninput="calcCredits()">
+              <span class="credits-rate">× 2 / 1M</span>
+              <div class="credits-result" id="res_clicks">0.00</div>
+            </div>
+          </div>
+          <div class="credits-warning" id="warn_clicks">⚠ Supera el máximo de 30,000,000 clicks</div>
+
+          <!-- Re-engagements -->
+          <div class="credits-row">
+            <div class="credits-label">Re-engagements</div>
+            <div class="credits-input-wrap">
+              <input class="credits-input" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
+              <span class="credits-rate">× 30 / 1M</span>
+              <div class="credits-result" id="res_reeng">0.00</div>
+            </div>
+          </div>
+
+          <!-- Re-installs -->
+          <div class="credits-row">
+            <div class="credits-label">Re-installs</div>
+            <div class="credits-input-wrap">
+              <input class="credits-input" type="number" id="inp_reinst" min="0" placeholder="0" oninput="calcCredits()">
+              <span class="credits-rate">× 60 / 1M</span>
+              <div class="credits-result" id="res_reinst">0.00</div>
+            </div>
+          </div>
+
+          <!-- Events -->
+          <div class="credits-row">
+            <div class="credits-label">
+              Events (IAEs & Sessions)
+              <span class="credits-sublabel">Todos los eventos del MMP</span>
+            </div>
+            <div class="credits-input-wrap">
+              <input class="credits-input" type="number" id="inp_events" min="0" placeholder="0" oninput="calcCredits()">
+              <span class="credits-rate">× 2 / 1M</span>
+              <div class="credits-result" id="res_events">0.00</div>
+            </div>
+          </div>
+
+          <div class="credits-divider"></div>
+
+          <!-- % Key Event / Clicks -->
+          <div class="credits-row">
+            <div class="credits-label">
+              % Key Event / Clicks
+              <span class="credits-sublabel">Terminan en _contratado o _finalizado · rango esperado: 0.003%–0.009%</span>
+            </div>
+            <div class="credits-input-wrap">
+              <input class="credits-input" type="number" id="inp_keyev" min="0" placeholder="auto" step="0.0001" style="font-size:11.5px" oninput="calcCredits()" disabled>
+              <span class="credits-rate" style="font-size:10px;color:var(--rl-text-muted)">calculado auto</span>
+              <div class="credits-result" id="res_keyev" style="font-size:11.5px;color:var(--rl-text-secondary)">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha: datos pendientes + resumen -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <!-- Pendientes -->
+          <div class="credits-group">
+            <div class="credits-group-title">⏳ Pendientes de datos</div>
+
+            <!-- Datalocker -->
+            <div class="credits-row">
+              <div class="credits-label">
+                Datalocker (incl Analytics)
+                <span class="credits-sublabel">Sin datos disponibles aún</span>
+              </div>
+              <div class="credits-input-wrap">
+                <input class="credits-input" type="number" id="inp_dlock" min="0" placeholder="—" oninput="calcCredits()" disabled>
+                <span class="credits-rate">× 1 / 1M</span>
+                <div class="credits-result" id="res_dlock" style="color:var(--rl-text-muted)">—</div>
+              </div>
+            </div>
+
+            <!-- Pull API -->
+            <div class="credits-row">
+              <div class="credits-label">
+                Pull API (Aggregated & RAW)
+                <span class="credits-sublabel">Sin datos disponibles aún</span>
+              </div>
+              <div class="credits-input-wrap">
+                <input class="credits-input" type="number" id="inp_api" min="0" placeholder="—" oninput="calcCredits()" disabled>
+                <span class="credits-rate">× 10 / 1M</span>
+                <div class="credits-result" id="res_api" style="color:var(--rl-text-muted)">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div class="credits-group" style="border-top:3px solid var(--rl-accent-purple)">
+            <div class="credits-group-title">💎 Total de créditos</div>
+            <div class="credits-total-row">
+              <div class="credits-total-label">Créditos consumidos</div>
+              <div class="credits-total-value" id="totalCredits">0.00</div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="section-label" style="margin-top:0">Desglose</div>
+              <table style="width:100%;font-size:11.5px">
+                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Clicks</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_clicks">0.00</td></tr>
+                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Re-engagements</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reeng">0.00</td></tr>
+                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Re-installs</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_reinst">0.00</td></tr>
+                <tr><td style="padding:3px 0;color:var(--rl-text-secondary)">Events</td><td style="text-align:right;font-family:monospace;font-weight:600" id="br_events">0.00</td></tr>
+                <tr style="border-top:1px solid var(--rl-card-border)">
+                  <td style="padding:5px 0 2px;font-weight:600">Total</td>
+                  <td style="text-align:right;font-family:monospace;font-weight:700;color:var(--rl-accent-purple)" id="br_total">0.00</td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Upload -->
-    <div class="upload-zone" id="uploadZone">
-      <input type="file" accept=".csv,.tsv,.txt" id="csvInput" style="display:none"/>
-      <div style="font-size:32px;margin-bottom:10px">📂</div>
-      <h2>Arrastrá tu archivo aquí</h2>
-      <p style="color:var(--muted);font-size:13px;margin-top:4px">CSV o TSV exportado de AppsFlyer</p>
-      <div class="upload-hint">step_6 obligatorio · completed_aprobado y/o contratado · Country CO</div>
-    </div>
-
-    <!-- Results -->
-    <div id="resultsSection" style="display:none;margin-top:20px">
-      <div class="tabs-row">
-        <div class="tab-group" id="statusTabs">
-          <button class="tab active" onclick="setFilter('all','status',this)">Todos</button>
-          <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
-          <button class="tab" onclick="setFilter('missing','status',this)">⚠ Pasos faltantes</button>
-          <button class="tab" onclick="setFilter('excluded','status',this)">❌ Excluidos</button>
-        </div>
-        <div class="tab-sep"></div>
-        <div class="tab-group" id="productTabs">
-          <button class="tab active" onclick="setFilter('all','product',this)">Todos</button>
-          <button class="tab" onclick="setFilter('libreton','product',this)">📘 Cuenta Digital</button>
-          <button class="tab" onclick="setFilter('nomina','product',this)">💼 Nómina</button>
-          <button class="tab" onclick="setFilter('other','product',this)">❓ Otro</button>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <div class="table-scroll">
-          <table>
-            <thead><tr>
-              <th>AppsFlyer ID</th><th>Estado</th><th>Producto</th>
-              <th>Pasos registrados</th><th>País</th><th>af_content</th>
-            </tr></thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="export-row">
-        <button class="btn btn-ghost"   onclick="exportCSV('all')">Exportar Todos</button>
-        <button class="btn btn-ghost"   onclick="exportCSV('libreton')">Exportar Cuenta Digital</button>
-        <button class="btn btn-ghost"   onclick="exportCSV('nomina')">Exportar Nómina</button>
-        <button class="btn btn-primary" onclick="exportCSV('clean')">Exportar Facturables</button>
-      </div>
-    </div>
-  </main>
-</div>
+  </div><!-- /content -->
+</div><!-- /app-body -->
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────────
-// step_1        → OPTIONAL (no penaliza si falta)
-// step_6        → OBLIGATORIO
-// completed_aprobado OR completed_contratado → al menos uno es OBLIGATORIO
-//   (pueden estar los dos, o solo uno, pero al menos uno tiene que estar)
-const OPTIONAL_STEPS = ['apertura_cuenta_en_linea_no_cliente-app_step_1'];
-const STEP_6         = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
-const COMPLETED_APROBADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
-const COMPLETED_CONTRATADO = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
-const ALL_STEPS = [
-  ...OPTIONAL_STEPS,
-  STEP_6,
-  COMPLETED_APROBADO,
-  COMPLETED_CONTRATADO
-];
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  const names = { validator: 'Funnel Validator', credits: 'Calculadora de Créditos' };
+  const badges = { validator: 'step_6 + aprobado|contratado', credits: 'AppsFlyer Credits' };
+  document.getElementById('topbarActive').textContent = names[id];
+  document.getElementById('topbarBadge').textContent  = badges[id];
+}
+
+// ══════════════════════════════════════════════════════
+// CREDITS CALCULATOR
+// ══════════════════════════════════════════════════════
+const RATES = { clicks: 2, reeng: 30, reinst: 60, events: 2 };
+const MAX_CLICKS = 30_000_000;
+
+function calcCredits() {
+  const get = id => {
+    const v = parseFloat(document.getElementById('inp_' + id).value);
+    return isNaN(v) || v < 0 ? 0 : v;
+  };
+  const fmt = n => n.toFixed(4);
+
+  const clicks  = Math.min(get('clicks'), MAX_CLICKS);
+  const reeng   = get('reeng');
+  const reinst  = get('reinst');
+  const events  = get('events');
+
+  const r_clicks  = clicks  * RATES.clicks  / 1_000_000;
+  const r_reeng   = reeng   * RATES.reeng   / 1_000_000;
+  const r_reinst  = reinst  * RATES.reinst  / 1_000_000;
+  const r_events  = events  * RATES.events  / 1_000_000;
+  const total     = r_clicks + r_reeng + r_reinst + r_events;
+
+  document.getElementById('res_clicks').textContent = fmt(r_clicks);
+  document.getElementById('res_reeng').textContent  = fmt(r_reeng);
+  document.getElementById('res_reinst').textContent = fmt(r_reinst);
+  document.getElementById('res_events').textContent = fmt(r_events);
+
+  document.getElementById('br_clicks').textContent  = fmt(r_clicks);
+  document.getElementById('br_reeng').textContent   = fmt(r_reeng);
+  document.getElementById('br_reinst').textContent  = fmt(r_reinst);
+  document.getElementById('br_events').textContent  = fmt(r_events);
+  document.getElementById('br_total').textContent   = fmt(total);
+  document.getElementById('totalCredits').textContent = fmt(total);
+
+  // Clicks warning
+  const rawClicks = parseFloat(document.getElementById('inp_clicks').value) || 0;
+  document.getElementById('warn_clicks').style.display = rawClicks > MAX_CLICKS ? 'block' : 'none';
+
+  // Key event / clicks ratio (auto calculated)
+  const keyEvPct = clicks > 0 ? (events / clicks * 100) : null;
+  const keEl = document.getElementById('res_keyev');
+  if (keyEvPct !== null) {
+    keEl.textContent = keyEvPct.toFixed(4) + '%';
+    const inRange = keyEvPct >= 0.003 && keyEvPct <= 0.009;
+    keEl.style.color = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
+  } else {
+    keEl.textContent = '—';
+    keEl.style.color = 'var(--rl-text-muted)';
+  }
+}
+
+function resetCredits() {
+  ['clicks','reeng','reinst','events'].forEach(id => {
+    document.getElementById('inp_' + id).value = '';
+  });
+  calcCredits();
+}
+
+// ══════════════════════════════════════════════════════
+// FUNNEL VALIDATOR — CONFIG
+// ══════════════════════════════════════════════════════
+const OPTIONAL_STEPS         = ['apertura_cuenta_en_linea_no_cliente-app_step_1'];
+const STEP_6                 = 'apertura_cuenta_en_linea_no_cliente-app_step_6';
+const COMPLETED_APROBADO     = 'apertura_cuenta_en_linea_no_cliente-app_completed_aprobado';
+const COMPLETED_CONTRATADO   = 'apertura_cuenta_en_linea_no_cliente-app_completed_contratado';
+const ALL_STEPS = [...OPTIONAL_STEPS, STEP_6, COMPLETED_APROBADO, COMPLETED_CONTRATADO];
 const REQUIRED_CC = 'CO';
+
+// Geo: minimum minutes allowed between consecutive events in different cities/states
+const GEO_MIN_CITY_MIN  = 5;   // 3–8 min midpoint: 5 min
+const GEO_MIN_STATE_MIN = 10;
+
+// Max completions of same product before flagging as duplicate
+const MAX_COMPLETIONS = 2;
 
 let allResults   = [];
 let activeStatus  = 'all';
 let activeProduct = 'all';
 
-// ── Upload zone wiring ────────────────────────────────────────────────────────
-const csvInput  = document.getElementById('csvInput');
+// ── Upload wiring ──────────────────────────────────────
+const csvInput   = document.getElementById('csvInput');
 const uploadZone = document.getElementById('uploadZone');
+uploadZone.addEventListener('click',     () => csvInput.click());
+uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); });
+uploadZone.addEventListener('drop',      e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) processFile(f); });
+csvInput.addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); e.target.value=''; });
 
-// Click on zone or button both trigger file picker
-uploadZone.addEventListener('click', () => csvInput.click());
-
-csvInput.addEventListener('change', e => {
-  if (e.target.files && e.target.files[0]) processFile(e.target.files[0]);
-  e.target.value = ''; // allow re-selecting same file
-});
-
-uploadZone.addEventListener('dragover', e => {
-  e.preventDefault();
-  e.stopPropagation();
-  uploadZone.classList.add('drag-over');
-});
-uploadZone.addEventListener('dragleave', e => {
-  e.preventDefault();
-  uploadZone.classList.remove('drag-over');
-});
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault();
-  e.stopPropagation();
-  uploadZone.classList.remove('drag-over');
-  const file = e.dataTransfer.files && e.dataTransfer.files[0];
-  if (file) processFile(file);
-});
-
-// ── File processing ───────────────────────────────────────────────────────────
+// ── File processing ────────────────────────────────────
 function processFile(file) {
-  showInfo('Leyendo archivo: ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)...');
-
-  // Step 1: read as binary to detect encoding & delimiter
+  showInfo('Leyendo ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)…');
   const reader = new FileReader();
   reader.onerror = () => showError('No se pudo leer el archivo.');
   reader.onload  = evt => {
     let text;
     const bytes = new Uint8Array(evt.target.result);
-
-    // Try UTF-8 first; fall back to latin-1
-    try {
-      text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
-    } catch (e) {
-      text = new TextDecoder('iso-8859-1').decode(bytes);
-    }
-
-    // Strip BOM if present
-    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-
-    // Detect delimiter from first line
-    const firstLine = text.split(/\r?\n/)[0] || '';
-    const tabs   = (firstLine.match(/\t/g) || []).length;
-    const commas = (firstLine.match(/,/g)  || []).length;
-    const delimiter = tabs > commas ? '\t' : ',';
-
-    showInfo('Archivo leído. Detectado: ' + (delimiter === '\t' ? 'TSV (tabs)' : 'CSV (comas)') + '. Procesando…');
-
-    // Step 2: parse with PapaParse using the decoded string
-    Papa.parse(text, {
-      header: true,
-      skipEmptyLines: true,
-      delimiter: delimiter,
-      transformHeader: h => h.trim(),   // strip any whitespace from header names
-      transform: v => (v || '').trim(), // strip whitespace from values
-      complete: result => {
-        hideInfo();
-        if (!result.data || result.data.length === 0) {
-          showError('El archivo está vacío o no pudo ser parseado.');
-          return;
-        }
-        const cols = Object.keys(result.data[0] || {});
-        if (!cols.includes('AppsFlyer ID') || !cols.includes('Event Name')) {
-          showError('No se encontraron las columnas esperadas. Columnas detectadas: ' + cols.slice(0, 10).join(', '));
-          return;
-        }
-        analyze(result.data);
-      },
-      error: err => showError('Error al parsear: ' + (err.message || err))
+    try { text = new TextDecoder('utf-8',{fatal:true}).decode(bytes); }
+    catch(e) { text = new TextDecoder('iso-8859-1').decode(bytes); }
+    if (text.charCodeAt(0)===0xFEFF) text = text.slice(1);
+    const first = text.split(/\r?\n/)[0]||'';
+    const delim = (first.match(/\t/g)||[]).length > (first.match(/,/g)||[]).length ? '\t' : ',';
+    showInfo('Parseando…');
+    Papa.parse(text,{
+      header:true, skipEmptyLines:true, delimiter:delim,
+      transformHeader:h=>h.trim(), transform:v=>(v||'').trim(),
+      complete: r => { hideInfo(); if(!r.data||!r.data.length){showError('Archivo vacío.');return;} analyze(r.data); },
+      error: err => showError('Error: '+(err.message||err))
     });
   };
   reader.readAsArrayBuffer(file);
 }
 
-// ── Analysis ──────────────────────────────────────────────────────────────────
+// ── Analysis ───────────────────────────────────────────
 function analyze(rows) {
-  // Group events by AppsFlyer ID
+  // Group by AppsFlyer ID, keeping all event rows with timing
   const byId = {};
   rows.forEach(row => {
     const id    = row['AppsFlyer ID'];
     const event = row['Event Name'];
-    if (!id || !event) return;
-    if (!byId[id]) byId[id] = [];
+    if (!id||!event) return;
+    if (!byId[id]) byId[id]=[];
     byId[id].push({
-      event:   event,
-      value:   row['Event Value']   || '',
-      country: (row['Country Code'] || '').toUpperCase()
+      event,
+      value:   row['Event Value']||'',
+      country:(row['Country Code']||'').toUpperCase(),
+      city:   (row['City']||'').toLowerCase(),
+      state:  (row['State']||'').toLowerCase(),
+      time:    parseEventTime(row['Event Time']||'')
     });
   });
 
-  // Keep IDs that fired at least one of the two completed events
   allResults = Object.entries(byId)
-    .filter(([, evs]) => evs.some(e => e.event === COMPLETED_APROBADO || e.event === COMPLETED_CONTRATADO))
+    .filter(([,evs]) => evs.some(e => e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO))
     .map(([id, evs]) => {
-      // Use the last completed event fired (prefer contratado > aprobado for data extraction)
-      const finalRow = evs.find(e => e.event === COMPLETED_CONTRATADO)
-                    || evs.find(e => e.event === COMPLETED_APROBADO);
-      const country = finalRow ? finalRow.country : '';
-      const validCC = country === REQUIRED_CC;
+      // Sort events by time ascending
+      evs.sort((a,b)=>(a.time||0)-(b.time||0));
 
-      const registered = ALL_STEPS.filter(s => evs.some(e => e.event === s));
+      const finalRow = evs.find(e=>e.event===COMPLETED_CONTRATADO)||evs.find(e=>e.event===COMPLETED_APROBADO);
+      const country  = finalRow ? finalRow.country : '';
+      const validCC  = country === REQUIRED_CC;
 
-      // Validation: step_6 must be present, and at least one completed event must be present
-      const missingStep6     = !registered.includes(STEP_6);
-      const hasAnyCompleted  = registered.includes(COMPLETED_APROBADO) || registered.includes(COMPLETED_CONTRATADO);
-      const missingRequired  = [
-        ...(missingStep6    ? [STEP_6] : []),
-        ...(!hasAnyCompleted ? ['completed_aprobado o completed_contratado'] : [])
+      const registered = ALL_STEPS.filter(s=>evs.some(e=>e.event===s));
+      const missingStep6    = !registered.includes(STEP_6);
+      const hasAnyCompleted = registered.includes(COMPLETED_APROBADO)||registered.includes(COMPLETED_CONTRATADO);
+      const missingRequired = [
+        ...(missingStep6    ?[STEP_6]:[]),
+        ...(!hasAnyCompleted?['completed_aprobado o completed_contratado']:[])
       ];
 
-      // Which completed events fired (for display)
-      const hasAprobado    = registered.includes(COMPLETED_APROBADO);
-      const hasContratado  = registered.includes(COMPLETED_CONTRATADO);
-
-      const afContent = getAfContent(finalRow ? finalRow.value : '');
+      const afContent = getAfContent(finalRow?finalRow.value:'');
       const product   = classifyProduct(afContent);
 
-      const status = !validCC              ? 'excluded'
-                   : missingRequired.length ? 'missing'
-                   :                          'clean';
+      // ── Geo check ──────────────────────────────────────
+      const geoIssues = [];
+      for (let i=1; i<evs.length; i++) {
+        const prev=evs[i-1], curr=evs[i];
+        if (!prev.time||!curr.time) continue;
+        const diffMin = (curr.time - prev.time) / 60000;
+        if (diffMin < 0) continue; // ignore out-of-order after sort
+        if (prev.city && curr.city && prev.city!==curr.city && diffMin < GEO_MIN_CITY_MIN) {
+          geoIssues.push(`Ciudad imposible: ${prev.city}→${curr.city} en ${diffMin.toFixed(1)} min`);
+        } else if (prev.state && curr.state && prev.state!==curr.state && diffMin < GEO_MIN_STATE_MIN) {
+          geoIssues.push(`Departamento imposible: ${prev.state}→${curr.state} en ${diffMin.toFixed(1)} min`);
+        }
+      }
 
-      return { id, status, country, registered, missingRequired, hasAprobado, hasContratado, product, afContent };
+      // ── Duplicate completions check ─────────────────────
+      const completions = evs.filter(e=>e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO);
+      const productCompletions = completions.length;
+      const isDuplicate = productCompletions > MAX_COMPLETIONS;
+
+      // ── Status ─────────────────────────────────────────
+      let status, exclusionReason = '';
+      if (!validCC) {
+        status = 'excluded'; exclusionReason = 'País no CO';
+      } else if (geoIssues.length > 0) {
+        status = 'geo'; exclusionReason = geoIssues[0];
+      } else if (isDuplicate) {
+        status = 'dup'; exclusionReason = `${productCompletions} completaciones (máx ${MAX_COMPLETIONS})`;
+      } else if (missingRequired.length > 0) {
+        status = 'missing'; exclusionReason = 'Falta: ' + missingRequired.map(s=>s.split('-app_')[1]||s).join(', ');
+      } else {
+        status = 'clean';
+      }
+
+      return {
+        id, status, country, registered, missingRequired,
+        hasAprobado:   registered.includes(COMPLETED_APROBADO),
+        hasContratado: registered.includes(COMPLETED_CONTRATADO),
+        product, afContent, geoIssues, isDuplicate,
+        productCompletions, exclusionReason
+      };
     });
 
   renderUI();
 }
 
-function getAfContent(val) {
-  try { return JSON.parse(val).af_content || ''; } catch(e) { return ''; }
+function parseEventTime(s) {
+  if (!s) return null;
+  const d = new Date(s.replace(' ','T'));
+  return isNaN(d.getTime()) ? null : d.getTime();
 }
-function classifyProduct(afContent) {
-  const c = afContent.toLowerCase();
+function getAfContent(val) {
+  try { return JSON.parse(val).af_content||''; } catch(e){ return ''; }
+}
+function classifyProduct(c) {
+  c = c.toLowerCase();
   if (c.includes('libreton')) return 'libreton';
-  if (c.includes('nomina') || c.includes('nómina')) return 'nomina';
+  if (c.includes('nomina')||c.includes('nómina')) return 'nomina';
   return 'other';
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
+// ── Render ─────────────────────────────────────────────
 function renderUI() {
   document.getElementById('statsSection').style.display   = 'flex';
+  document.getElementById('statsSection').style.flexDirection = 'column';
   document.getElementById('resultsSection').style.display = 'block';
   document.getElementById('uploadZone').style.display     = 'none';
 
   const total    = allResults.length;
-  const clean    = allResults.filter(r => r.status === 'clean').length;
-  const missing  = allResults.filter(r => r.status === 'missing').length;
-  const excluded = allResults.filter(r => r.status === 'excluded').length;
-  const fact     = allResults.filter(r => r.status === 'clean');
+  const clean    = allResults.filter(r=>r.status==='clean').length;
+  const missing  = allResults.filter(r=>r.status==='missing').length;
+  const geo      = allResults.filter(r=>r.status==='geo').length;
+  const dup      = allResults.filter(r=>r.status==='dup').length;
+  const excluded = allResults.filter(r=>r.status==='excluded').length;
+  const fact     = allResults.filter(r=>r.status==='clean');
+  const totalExcl = missing + geo + dup + excluded;
 
   document.getElementById('sTotal').textContent    = total;
   document.getElementById('sClean').textContent    = clean;
-  document.getElementById('sMissing').textContent  = missing;
+  document.getElementById('sMissing').textContent  = missing + geo + dup;
   document.getElementById('sExcluded').textContent = excluded;
-  document.getElementById('sPct').textContent      = total ? Math.round(clean / total * 100) + '%' : '0%';
-  document.getElementById('sLibreton').textContent = fact.filter(r => r.product === 'libreton').length;
-  document.getElementById('sNomina').textContent   = fact.filter(r => r.product === 'nomina').length;
-  document.getElementById('sOther').textContent    = fact.filter(r => r.product === 'other').length;
+  document.getElementById('sPct').textContent      = total ? Math.round(clean/total*100)+'%' : '0%';
+  document.getElementById('sLibreton').textContent = fact.filter(r=>r.product==='libreton').length;
+  document.getElementById('sNomina').textContent   = fact.filter(r=>r.product==='nomina').length;
+  document.getElementById('sOther').textContent    = fact.filter(r=>r.product==='other').length;
 
   renderTable();
 }
 
 function setFilter(val, type, btn) {
-  if (type === 'status') {
-    activeStatus = val;
-    document.querySelectorAll('#statusTabs .tab').forEach(t => t.classList.remove('active'));
+  if (type==='status') {
+    activeStatus=val;
+    document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
   } else {
-    activeProduct = val;
-    document.querySelectorAll('#productTabs .tab').forEach(t => t.classList.remove('active'));
+    activeProduct=val;
+    document.querySelectorAll('#productTabs .tab').forEach(t=>t.classList.remove('active'));
   }
   btn.classList.add('active');
   renderTable();
@@ -369,100 +697,78 @@ function setFilter(val, type, btn) {
 
 function renderTable() {
   let data = allResults;
-  if (activeStatus  !== 'all') data = data.filter(r => r.status  === activeStatus);
-  if (activeProduct !== 'all') data = data.filter(r => r.product === activeProduct);
+  if (activeStatus  !=='all') data=data.filter(r=>r.status===activeStatus);
+  if (activeProduct !=='all') data=data.filter(r=>r.product===activeProduct);
 
   document.getElementById('tableBody').innerHTML = data.map(r => {
-    const sb = r.status === 'clean'
-      ? `<span class="badge bv"><span class="dot" style="background:var(--valid)"></span>Facturable</span>`
-      : r.status === 'missing'
-      ? `<span class="badge bw"><span class="dot" style="background:var(--warn)"></span>Pasos faltantes</span>`
-      : `<span class="badge bi"><span class="dot" style="background:var(--invalid)"></span>Excluido (no CO)</span>`;
+    const sb = r.status==='clean'
+      ? `<span class="badge bv">✓ Facturable</span>`
+      : r.status==='missing'
+      ? `<span class="badge bw">⚠ Pasos faltantes</span>`
+      : r.status==='geo'
+      ? `<span class="badge bw">📍 Alerta geo</span>`
+      : r.status==='dup'
+      ? `<span class="badge bw">🔁 Duplicado</span>`
+      : `<span class="badge bi">❌ Excluido</span>`;
 
-    const pb = r.status !== 'clean' ? '—'
-      : r.product === 'libreton' ? `<span class="badge bn">📘 Cuenta Digital</span>`
-      : r.product === 'nomina'   ? `<span class="badge bb">💼 Nómina</span>`
-      :                            `<span class="badge bw">❓ Otro</span>`;
+    const pb = r.status!=='clean' ? '—'
+      : r.product==='libreton' ? `<span class="badge bn">📘 Cuenta Digital</span>`
+      : r.product==='nomina'   ? `<span class="badge bb">💼 Nómina</span>`
+      :                           `<span class="badge bw">❓ Otro</span>`;
 
     const stepsHtml = ALL_STEPS.map(s => {
       const done = r.registered.includes(s);
       const opt  = OPTIONAL_STEPS.includes(s);
-      const lbl  = s.split('-app_')[1] || s;
-      // For the two completed events: green if done, gray if not done (but not an error if the other one is present)
-      const isCompleted = (s === COMPLETED_APROBADO || s === COMPLETED_CONTRATADO);
-      const otherCompleted = isCompleted && (r.hasAprobado || r.hasContratado);
-      const col  = done ? 'var(--valid)'
-                 : (opt || (isCompleted && otherCompleted)) ? 'var(--muted-soft)'
-                 : 'var(--invalid)';
-      const icon = done ? '✓' : (opt || (isCompleted && otherCompleted)) ? '·' : '✗';
-      const suf  = opt && !done ? ' <em style="font-size:9px;opacity:.55">(opc.)</em>'
-                 : isCompleted && !done && otherCompleted ? ' <em style="font-size:9px;opacity:.55">(no pasó)</em>'
-                 : '';
-      return `<span style="color:${col};margin-right:7px;font-size:11px">${icon} ${lbl}${suf}</span>`;
+      const lbl  = s.split('-app_')[1]||s;
+      const isCompleted = (s===COMPLETED_APROBADO||s===COMPLETED_CONTRATADO);
+      const otherOk = isCompleted && (r.hasAprobado||r.hasContratado);
+      const col  = done ? 'var(--rl-valid)' : (opt||(isCompleted&&otherOk)) ? 'var(--rl-text-muted)' : 'var(--rl-invalid)';
+      const icon = done ? '✓' : (opt||(isCompleted&&otherOk)) ? '·' : '✗';
+      return `<span style="color:${col};margin-right:8px;font-size:11px">${icon} ${lbl}</span>`;
     }).join('');
 
-    const missHint = r.missingRequired.length
-      ? `<div style="margin-top:3px;font-size:10px;color:var(--warn)">Falta: ${r.missingRequired.map(s => s.split('-app_')[1]).join(', ')}</div>`
-      : '';
-
-    const ccBadge = r.country === REQUIRED_CC
+    const ccBadge = r.country===REQUIRED_CC
       ? `<span class="badge bv">${r.country}</span>`
-      : `<span class="badge bi">${r.country || '—'}</span>`;
+      : `<span class="badge bi">${r.country||'—'}</span>`;
+
+    const reasonCell = r.exclusionReason
+      ? `<span style="font-size:11px;color:var(--rl-warn)">${esc(r.exclusionReason)}</span>`
+      : `<span style="color:var(--rl-text-muted);font-size:11px">—</span>`;
 
     return `<tr>
-      <td style="font-family:var(--mono);font-size:11.5px;font-weight:600">${esc(r.id)}</td>
+      <td style="font-family:monospace;font-size:11.5px;font-weight:600">${esc(r.id)}</td>
       <td>${sb}</td>
       <td>${pb}</td>
-      <td style="max-width:360px">${stepsHtml}${missHint}</td>
+      <td style="max-width:340px">${stepsHtml}</td>
       <td>${ccBadge}</td>
-      <td style="font-size:11px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent) || '—'}</td>
+      <td style="max-width:220px">${reasonCell}</td>
+      <td style="font-size:11px;color:var(--rl-text-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.afContent)}">${esc(r.afContent)||'—'}</td>
     </tr>`;
-  }).join('') || `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">Sin resultados para este filtro</td></tr>`;
+  }).join('')||`<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--rl-text-muted)">Sin resultados para este filtro</td></tr>`;
 }
 
-// ── Export ────────────────────────────────────────────────────────────────────
+// ── Export ─────────────────────────────────────────────
 function exportCSV(which) {
   let data = allResults;
-  if (which === 'clean')    data = data.filter(r => r.status === 'clean');
-  if (which === 'libreton') data = data.filter(r => r.status === 'clean' && r.product === 'libreton');
-  if (which === 'nomina')   data = data.filter(r => r.status === 'clean' && r.product === 'nomina');
-
-  const rows = [['AppsFlyer ID', 'Estado', 'Producto', 'País', 'Pasos OK/Total', 'Pasos faltantes', 'af_content']];
-  data.forEach(r => rows.push([
-    r.id, r.status, r.product, r.country,
-    r.registered.length + '/' + ALL_STEPS.length,
-    r.missingRequired.map(s => s.split('-app_')[1]).join('; '),
-    r.afContent
-  ]));
-  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
-  const a = Object.assign(document.createElement('a'), {
-    href:     URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })),
-    download: `bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
+  if (which==='clean')    data=data.filter(r=>r.status==='clean');
+  if (which==='libreton') data=data.filter(r=>r.status==='clean'&&r.product==='libreton');
+  if (which==='nomina')   data=data.filter(r=>r.status==='clean'&&r.product==='nomina');
+  const rows=[['AppsFlyer ID','Estado','Producto','País','Pasos OK','Razón exclusión','af_content']];
+  data.forEach(r=>rows.push([r.id,r.status,r.product,r.country,r.registered.length+'/'+ALL_STEPS.length,r.exclusionReason,r.afContent]));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'})),
+    download:`bbva_funnel_${which}_${new Date().toISOString().slice(0,10)}.csv`
   });
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function showError(msg) {
-  const e = document.getElementById('msgError');
-  e.textContent = '⚠ ' + msg;
-  e.style.display = 'block';
-  document.getElementById('msgInfo').style.display = 'none';
-}
-function showInfo(msg) {
-  const e = document.getElementById('msgInfo');
-  e.textContent = 'ℹ ' + msg;
-  e.style.display = 'block';
-  document.getElementById('msgError').style.display = 'none';
-}
-function hideInfo() {
-  document.getElementById('msgInfo').style.display = 'none';
-}
+// ── Helpers ────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showError(m){const e=document.getElementById('msgError');e.textContent='⚠ '+m;e.style.display='block';document.getElementById('msgInfo').style.display='none';}
+function showInfo(m){const e=document.getElementById('msgInfo');e.textContent='ℹ '+m;e.style.display='block';document.getElementById('msgError').style.display='none';}
+function hideInfo(){document.getElementById('msgInfo').style.display='none';}
 </script>
 </body>
 </html>
