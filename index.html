@@ -288,13 +288,39 @@ tr:hover td{background:#faf9ff}
           <div class="page-title">Calculadora de Créditos</div>
           <div class="page-subtitle">AppsFlyer MMP — BBVA Colombia</div>
         </div>
-        <button class="btn btn-secondary" onclick="resetCredits()">Limpiar</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-secondary" onclick="resetCredits()">Limpiar</button>
+          <button class="btn btn-primary" onclick="document.getElementById('csvCreditsInput').click()">📂 Cargar CSV</button>
+          <input type="file" id="csvCreditsInput" accept=".csv,.tsv,.txt" style="display:none">
+        </div>
+      </div>
+
+      <!-- Upload zone (shown when no data) -->
+      <div class="upload-zone" id="creditsUploadZone" style="margin-bottom:20px">
+        <div style="font-size:32px;margin-bottom:10px">📊</div>
+        <h2>Arrastrá el CSV de AppsFlyer aquí</h2>
+        <p>Reporte agregado exportado desde el dashboard (Aggregate Data)</p>
+        <div class="upload-hint">Clicks · Sessions · Conversions · Event counters</div>
+      </div>
+
+      <!-- File loaded indicator (hidden until CSV loaded) -->
+      <div id="creditsFileInfo" style="display:none;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--rl-valid-bg);border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:16px">✅</span>
+            <div>
+              <div style="font-size:12.5px;font-weight:600;color:var(--rl-valid)" id="creditsFileName">—</div>
+              <div style="font-size:11px;color:var(--rl-text-muted)" id="creditsFileRows">—</div>
+            </div>
+          </div>
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="resetCredits()">Cambiar archivo</button>
+        </div>
       </div>
 
       <div class="criteria-info">
         <strong>Regla de cálculo:</strong> créditos = cantidad × tasa / 1,000,000 &nbsp;·&nbsp;
-        <strong>Events</strong> incluye absolutamente todos los eventos que dispara el MMP &nbsp;·&nbsp;
-        <strong>Key Events</strong> son los que terminan en <code>_contratado</code> o <code>_finalizado</code>
+        <strong>Events</strong> = suma de todos los <em>(Event counter)</em> + Sessions &nbsp;·&nbsp;
+        <strong>Key Events</strong> = columnas terminadas en <code>_contratado</code> o <code>_finalizado</code>
       </div>
 
       <div class="credits-grid">
@@ -306,7 +332,7 @@ tr:hover td{background:#faf9ff}
           <div class="credits-row">
             <div class="credits-label">
               Clicks
-              <span class="credits-sublabel">Máx. 30,000,000</span>
+              <span class="credits-sublabel">Máx. 30,000,000 · filas re-attribution</span>
             </div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_clicks" min="0" max="30000000" placeholder="0" oninput="calcCredits()">
@@ -318,7 +344,10 @@ tr:hover td{background:#faf9ff}
 
           <!-- Re-engagements -->
           <div class="credits-row">
-            <div class="credits-label">Re-engagements</div>
+            <div class="credits-label">
+              Re-engagements
+              <span class="credits-sublabel">Conversions donde tipo = re-engagement</span>
+            </div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_reeng" min="0" placeholder="0" oninput="calcCredits()">
               <span class="credits-rate">× 30 / 1M</span>
@@ -328,7 +357,10 @@ tr:hover td{background:#faf9ff}
 
           <!-- Re-installs -->
           <div class="credits-row">
-            <div class="credits-label">Re-installs</div>
+            <div class="credits-label">
+              Re-installs
+              <span class="credits-sublabel">Conversions donde tipo = re-attribution</span>
+            </div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_reinst" min="0" placeholder="0" oninput="calcCredits()">
               <span class="credits-rate">× 60 / 1M</span>
@@ -340,7 +372,7 @@ tr:hover td{background:#faf9ff}
           <div class="credits-row">
             <div class="credits-label">
               Events (IAEs & Sessions)
-              <span class="credits-sublabel">Todos los eventos del MMP</span>
+              <span class="credits-sublabel">Todos los (Event counter) + Sessions</span>
             </div>
             <div class="credits-input-wrap">
               <input class="credits-input" type="number" id="inp_events" min="0" placeholder="0" oninput="calcCredits()">
@@ -351,51 +383,61 @@ tr:hover td{background:#faf9ff}
 
           <div class="credits-divider"></div>
 
-          <!-- % Key Event / Clicks -->
+          <!-- Key events (info only) -->
           <div class="credits-row">
             <div class="credits-label">
-              % Key Event / Clicks
-              <span class="credits-sublabel">Terminan en _contratado o _finalizado · rango esperado: 0.003%–0.009%</span>
+              Key Events
+              <span class="credits-sublabel">_contratado + _finalizado (solo referencia)</span>
             </div>
             <div class="credits-input-wrap">
-              <input class="credits-input" type="number" id="inp_keyev" min="0" placeholder="auto" step="0.0001" style="font-size:11.5px" oninput="calcCredits()" disabled>
-              <span class="credits-rate" style="font-size:10px;color:var(--rl-text-muted)">calculado auto</span>
-              <div class="credits-result" id="res_keyev" style="font-size:11.5px;color:var(--rl-text-secondary)">—</div>
+              <input class="credits-input" type="number" id="inp_keyev_raw" min="0" placeholder="0" oninput="calcCredits()" style="background:#f5f3fb;color:var(--rl-text-muted)" readonly>
+              <span class="credits-rate" style="font-size:10px">no factura</span>
+              <div class="credits-result" id="res_keyev" style="font-size:11.5px">—</div>
             </div>
           </div>
         </div>
 
-        <!-- Columna derecha: datos pendientes + resumen -->
+        <!-- Columna derecha: pendientes + resumen -->
         <div style="display:flex;flex-direction:column;gap:16px">
+
           <!-- Pendientes -->
           <div class="credits-group">
             <div class="credits-group-title">⏳ Pendientes de datos</div>
-
-            <!-- Datalocker -->
             <div class="credits-row">
               <div class="credits-label">
                 Datalocker (incl Analytics)
                 <span class="credits-sublabel">Sin datos disponibles aún</span>
               </div>
               <div class="credits-input-wrap">
-                <input class="credits-input" type="number" id="inp_dlock" min="0" placeholder="—" oninput="calcCredits()" disabled>
+                <input class="credits-input" type="number" id="inp_dlock" min="0" placeholder="—" disabled>
                 <span class="credits-rate">× 1 / 1M</span>
                 <div class="credits-result" id="res_dlock" style="color:var(--rl-text-muted)">—</div>
               </div>
             </div>
-
-            <!-- Pull API -->
             <div class="credits-row">
               <div class="credits-label">
                 Pull API (Aggregated & RAW)
                 <span class="credits-sublabel">Sin datos disponibles aún</span>
               </div>
               <div class="credits-input-wrap">
-                <input class="credits-input" type="number" id="inp_api" min="0" placeholder="—" oninput="calcCredits()" disabled>
+                <input class="credits-input" type="number" id="inp_api" min="0" placeholder="—" disabled>
                 <span class="credits-rate">× 10 / 1M</span>
                 <div class="credits-result" id="res_api" style="color:var(--rl-text-muted)">—</div>
               </div>
             </div>
+          </div>
+
+          <!-- % Key Event / Clicks -->
+          <div class="credits-group">
+            <div class="credits-group-title">📍 % Key Event / Clicks</div>
+            <div style="font-size:11.5px;color:var(--rl-text-secondary);margin-bottom:10px">
+              Rango esperado: <strong>0.003% – 0.009%</strong>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <div style="font-size:28px;font-weight:700;font-family:monospace;letter-spacing:-1px" id="keyevPctDisplay">—</div>
+              <div id="keyevPctBadge" style="font-size:12px;padding:4px 10px;border-radius:4px;font-weight:600">—</div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--rl-text-muted)" id="keyevPctDetail">Cargá un CSV para ver el cálculo</div>
           </div>
 
           <!-- Total -->
@@ -447,29 +489,127 @@ function showPage(id, btn) {
 const RATES = { clicks: 2, reeng: 30, reinst: 60, events: 2 };
 const MAX_CLICKS = 30_000_000;
 
+// Wire credits CSV upload
+const csvCreditsInput = document.getElementById('csvCreditsInput');
+const creditsUploadZone = document.getElementById('creditsUploadZone');
+
+csvCreditsInput.addEventListener('change', e => { if(e.target.files[0]) processCreditsFile(e.target.files[0]); e.target.value=''; });
+creditsUploadZone.addEventListener('click', () => csvCreditsInput.click());
+creditsUploadZone.addEventListener('dragover',  e => { e.preventDefault(); creditsUploadZone.classList.add('drag-over'); });
+creditsUploadZone.addEventListener('dragleave', e => { e.preventDefault(); creditsUploadZone.classList.remove('drag-over'); });
+creditsUploadZone.addEventListener('drop', e => {
+  e.preventDefault(); creditsUploadZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0]; if(f) processCreditsFile(f);
+});
+
+function processCreditsFile(file) {
+  const reader = new FileReader();
+  reader.onerror = () => alert('No se pudo leer el archivo.');
+  reader.onload = evt => {
+    let text;
+    const bytes = new Uint8Array(evt.target.result);
+    try { text = new TextDecoder('utf-8',{fatal:true}).decode(bytes); }
+    catch(e) { text = new TextDecoder('iso-8859-1').decode(bytes); }
+    if (text.charCodeAt(0)===0xFEFF) text = text.slice(1);
+
+    const firstLine = text.split(/\r?\n/)[0]||'';
+    const delim = (firstLine.match(/\t/g)||[]).length > (firstLine.match(/,/g)||[]).length ? '\t' : ',';
+
+    Papa.parse(text, {
+      header: true, skipEmptyLines: true, delimiter: delim,
+      transformHeader: h => h.trim(), transform: v => (v||'').trim(),
+      complete: result => {
+        if (!result.data || !result.data.length) { alert('Archivo vacío.'); return; }
+        extractCreditsFromCSV(result.data, file.name);
+      }
+    });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function numVal(v) {
+  const n = parseFloat(String(v||'').replace(/,/g,'').trim());
+  return isNaN(n) || n < 0 ? 0 : n;
+}
+
+function extractCreditsFromCSV(rows, fileName) {
+  const cols = Object.keys(rows[0] || {});
+
+  // Clicks: numeric value in 'Clicks' column, only re-attribution rows
+  const totalClicks = rows
+    .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution')
+    .reduce((s, r) => s + numVal(r['Clicks']), 0);
+
+  // Re-engagements: Conversions where type = re-engagement
+  const totalReeng = rows
+    .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-engagement')
+    .reduce((s, r) => s + numVal(r['Conversions']), 0);
+
+  // Re-installs: Conversions where type = re-attribution
+  const totalReinst = rows
+    .filter(r => (r['Conversion Type']||'').toLowerCase() === 're-attribution')
+    .reduce((s, r) => s + numVal(r['Conversions']), 0);
+
+  // Sessions
+  const totalSessions = rows.reduce((s, r) => s + numVal(r['Sessions']), 0);
+
+  // All event counter columns
+  const eventCols = cols.filter(c => c.includes('(Event counter)'));
+  const totalEventCounters = rows.reduce((s, r) => {
+    return s + eventCols.reduce((es, c) => es + numVal(r[c]), 0);
+  }, 0);
+
+  // Total events = event counters + sessions
+  const totalEvents = totalEventCounters + totalSessions;
+
+  // Key events: columns ending in _contratado or _finalizado (Event counter)
+  const keyCols = eventCols.filter(c => /_contratado|_finalizado/.test(c));
+  const totalKeyEvents = rows.reduce((s, r) => {
+    return s + keyCols.reduce((ks, c) => ks + numVal(r[c]), 0);
+  }, 0);
+
+  // Fill inputs
+  document.getElementById('inp_clicks').value    = Math.round(totalClicks);
+  document.getElementById('inp_reeng').value     = Math.round(totalReeng);
+  document.getElementById('inp_reinst').value    = Math.round(totalReinst);
+  document.getElementById('inp_events').value    = Math.round(totalEvents);
+  document.getElementById('inp_keyev_raw').value = Math.round(totalKeyEvents);
+
+  // Show file info, hide upload zone
+  document.getElementById('creditsUploadZone').style.display = 'none';
+  document.getElementById('creditsFileInfo').style.display   = 'block';
+  document.getElementById('creditsFileName').textContent = fileName;
+  document.getElementById('creditsFileRows').textContent =
+    `${rows.length} filas · ${eventCols.length} columnas de eventos · ${keyCols.length} key events detectados`;
+
+  calcCredits();
+}
+
 function calcCredits() {
   const get = id => {
     const v = parseFloat(document.getElementById('inp_' + id).value);
     return isNaN(v) || v < 0 ? 0 : v;
   };
   const fmt = n => n.toFixed(4);
+  const fmtN = n => n.toLocaleString('es-CO');
 
-  const clicks  = Math.min(get('clicks'), MAX_CLICKS);
-  const reeng   = get('reeng');
-  const reinst  = get('reinst');
-  const events  = get('events');
+  const rawClicks = get('clicks');
+  const clicks    = Math.min(rawClicks, MAX_CLICKS);
+  const reeng     = get('reeng');
+  const reinst    = get('reinst');
+  const events    = get('events');
+  const keyEvents = get('keyev_raw');
 
-  const r_clicks  = clicks  * RATES.clicks  / 1_000_000;
-  const r_reeng   = reeng   * RATES.reeng   / 1_000_000;
-  const r_reinst  = reinst  * RATES.reinst  / 1_000_000;
-  const r_events  = events  * RATES.events  / 1_000_000;
-  const total     = r_clicks + r_reeng + r_reinst + r_events;
+  const r_clicks = clicks  * RATES.clicks  / 1_000_000;
+  const r_reeng  = reeng   * RATES.reeng   / 1_000_000;
+  const r_reinst = reinst  * RATES.reinst  / 1_000_000;
+  const r_events = events  * RATES.events  / 1_000_000;
+  const total    = r_clicks + r_reeng + r_reinst + r_events;
 
   document.getElementById('res_clicks').textContent = fmt(r_clicks);
   document.getElementById('res_reeng').textContent  = fmt(r_reeng);
   document.getElementById('res_reinst').textContent = fmt(r_reinst);
   document.getElementById('res_events').textContent = fmt(r_events);
-
   document.getElementById('br_clicks').textContent  = fmt(r_clicks);
   document.getElementById('br_reeng').textContent   = fmt(r_reeng);
   document.getElementById('br_reinst').textContent  = fmt(r_reinst);
@@ -478,26 +618,43 @@ function calcCredits() {
   document.getElementById('totalCredits').textContent = fmt(total);
 
   // Clicks warning
-  const rawClicks = parseFloat(document.getElementById('inp_clicks').value) || 0;
   document.getElementById('warn_clicks').style.display = rawClicks > MAX_CLICKS ? 'block' : 'none';
 
-  // Key event / clicks ratio (auto calculated)
-  const keyEvPct = clicks > 0 ? (events / clicks * 100) : null;
-  const keEl = document.getElementById('res_keyev');
-  if (keyEvPct !== null) {
-    keEl.textContent = keyEvPct.toFixed(4) + '%';
-    const inRange = keyEvPct >= 0.003 && keyEvPct <= 0.009;
-    keEl.style.color = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
+  // Key event / clicks %
+  const pctEl     = document.getElementById('keyevPctDisplay');
+  const badgeEl   = document.getElementById('keyevPctBadge');
+  const detailEl  = document.getElementById('keyevPctDetail');
+  const resKeyEl  = document.getElementById('res_keyev');
+
+  if (clicks > 0 && keyEvents > 0) {
+    const pct = keyEvents / clicks * 100;
+    const inRange = pct >= 0.003 && pct <= 0.009;
+    pctEl.textContent   = pct.toFixed(4) + '%';
+    pctEl.style.color   = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
+    badgeEl.textContent = inRange ? '✓ En rango' : '⚠ Fuera de rango';
+    badgeEl.style.background = inRange ? 'var(--rl-valid-bg)' : 'var(--rl-warn-bg)';
+    badgeEl.style.color      = inRange ? 'var(--rl-valid)'    : 'var(--rl-warn)';
+    detailEl.textContent = `${fmtN(Math.round(keyEvents))} key events / ${fmtN(Math.round(clicks))} clicks`;
+    resKeyEl.textContent = fmtN(Math.round(keyEvents));
+    resKeyEl.style.color = inRange ? 'var(--rl-valid)' : 'var(--rl-warn)';
   } else {
-    keEl.textContent = '—';
-    keEl.style.color = 'var(--rl-text-muted)';
+    pctEl.textContent   = '—';
+    pctEl.style.color   = 'var(--rl-text-muted)';
+    badgeEl.textContent = '—';
+    badgeEl.style.background = '#f0eff5';
+    badgeEl.style.color      = 'var(--rl-text-muted)';
+    detailEl.textContent = 'Cargá un CSV para ver el cálculo';
+    resKeyEl.textContent = '—';
   }
 }
 
 function resetCredits() {
-  ['clicks','reeng','reinst','events'].forEach(id => {
-    document.getElementById('inp_' + id).value = '';
+  ['clicks','reeng','reinst','events','keyev_raw'].forEach(id => {
+    const el = document.getElementById('inp_' + id);
+    if (el) el.value = '';
   });
+  document.getElementById('creditsUploadZone').style.display = 'block';
+  document.getElementById('creditsFileInfo').style.display   = 'none';
   calcCredits();
 }
 
