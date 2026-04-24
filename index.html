@@ -189,7 +189,7 @@ tr:hover td{background:#faf9ff}
         · <strong>step_6</strong> obligatorio — <strong>completed_aprobado</strong> y/o <strong>completed_contratado</strong> al menos uno requerido<br>
         · <strong>País:</strong> solo registros con Country Code = CO son facturables<br>
         · <strong>Geografía:</strong> cambio de ciudad en menos de 10 min → geográficamente imposible → excluido<br>
-        · <strong>Duración del funnel:</strong> tiempo desde el primer step_1 (o step_6 si no hay step_1) hasta el primer completion debe ser entre 8 y 60 minutos<br>
+        · <strong>Duración del funnel:</strong> tiempo desde el primer step_1 (o step_6 si no hay step_1) hasta el primer completion debe ser entre 8 y 60 minutos — mide el tiempo total del proceso de apertura<br>
         · <strong>Múltiples completaciones:</strong> más de 2 completaciones → descartado
       </div>
 
@@ -665,29 +665,22 @@ function analyze(rows) {
       }
 
       // ── RULE 2: timing (duración del funnel) ──
-      // Si hay step_1 Y step_6: medir step_1 → step_6
-      // Si NO hay step_1 pero sí step_6: medir step_6 → completion
+      // Medir siempre: primer_step_1 → primer_completion (si hay step_1)
+      //                primer_step_6 → primer_completion (si NO hay step_1)
       // Rango válido: 8–60 minutos
       let timingIssue = '';
       const step1Event = evs.find(e => e.event === STEP_1);
       const step6Event = evs.find(e => e.event === STEP_6);
       const completionEvent = evs.find(e => e.event === COMPLETED_CONTRATADO) || evs.find(e => e.event === COMPLETED_APROBADO);
-      if (step1Event && step6Event && step1Event.time && step6Event.time) {
-        // caso normal: step_1 → step_6
-        const diffMin = (step6Event.time - step1Event.time) / 60000;
-        if (diffMin < STEP1_TO_STEP6_MIN_MIN) {
-          timingIssue = `Duración irreal: step_1→step_6 = ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
-        } else if (diffMin > STEP1_TO_STEP6_MAX_MIN) {
-          timingIssue = `Duración irreal: step_1→step_6 = ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
-        }
-      } else if (!step1Event && step6Event && completionEvent && step6Event.time && completionEvent.time) {
-        // sin step_1: medir step_6 → completion
-        const diffMin = (completionEvent.time - step6Event.time) / 60000;
+      const anchorEvent = step1Event || step6Event;
+      const anchorName = step1Event ? 'step_1' : 'step_6';
+      if (anchorEvent && completionEvent && anchorEvent.time && completionEvent.time) {
+        const diffMin = (completionEvent.time - anchorEvent.time) / 60000;
         const completionName = completionEvent.event.split('-app_')[1] || completionEvent.event;
         if (diffMin < STEP1_TO_STEP6_MIN_MIN) {
-          timingIssue = `Duración irreal: step_6→${completionName} = ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
+          timingIssue = `Duración irreal: ${anchorName}→${completionName} = ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
         } else if (diffMin > STEP1_TO_STEP6_MAX_MIN) {
-          timingIssue = `Duración irreal: step_6→${completionName} = ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
+          timingIssue = `Duración irreal: ${anchorName}→${completionName} = ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
         }
       }
 
