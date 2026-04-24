@@ -188,8 +188,8 @@ tr:hover td{background:#faf9ff}
         <strong>Criterios de validación:</strong><br>
         · <strong>step_6</strong> obligatorio — <strong>completed_aprobado</strong> y/o <strong>completed_contratado</strong> al menos uno requerido<br>
         · <strong>País:</strong> solo registros con Country Code = CO son facturables<br>
-        · <strong>Geografía:</strong> cambio de ciudad en menos de 45 min → geográficamente imposible → excluido<br>
-        · <strong>Tiempo step_1 → step_6:</strong> si existen ambos, debe ser entre 12 y 60 minutos (menos de 12 = demasiado rápido, más de 60 = demasiado lento)<br>
+        · <strong>Geografía:</strong> cambio de ciudad en menos de 10 min → geográficamente imposible → excluido<br>
+        · <strong>Tiempo step_1 → step_6:</strong> si existen ambos, debe ser entre 8 y 60 minutos (menos de 8 min = demasiado rápido, más de 60 min = demasiado lento)<br>
         · <strong>Múltiples completaciones:</strong> más de 2 completaciones → descartado
       </div>
 
@@ -572,10 +572,10 @@ const ALL_STEPS = [...OPTIONAL_STEPS, STEP_6, COMPLETED_APROBADO, COMPLETED_CONT
 const REQUIRED_CC = 'CO';
 
 // ── UPDATED VALIDATION CONSTANTS ──────────────────────
-const GEO_MIN_CITY_MIN       = 45;   // cambio de ciudad imposible si < 45 min
+const GEO_MIN_CITY_MIN       = 10;   // cambio de ciudad imposible si < 10 min
 const GEO_MIN_STATE_MIN      = 10;   // cambio de dpto imposible si < 10 min (sin cambios)
 const MAX_COMPLETIONS        = 2;    // más de 2 completaciones → duplicado
-const STEP1_TO_STEP6_MIN_MIN = 12;   // step1→step6 mínimo 12 min
+const STEP1_TO_STEP6_MIN_MIN = 8;    // step1→step6 mínimo 8 min
 const STEP1_TO_STEP6_MAX_MIN = 60;   // step1→step6 máximo 60 min
 
 let allResults   = [];
