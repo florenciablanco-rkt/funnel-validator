@@ -665,22 +665,29 @@ function analyze(rows) {
       }
 
       // ── RULE 2: timing (duración del funnel) ──
-      // Medir: primer_completion - primer_step_1 (si hay step_1)
-      //        primer_completion - primer_step_6 (si NO hay step_1 pero hay step_6)
+      // Si hay step_1 Y step_6: medir step_1 → step_6
+      // Si NO hay step_1 pero sí step_6: medir step_6 → completion
       // Rango válido: 8–60 minutos
       let timingIssue = '';
       const step1Event = evs.find(e => e.event === STEP_1);
       const step6Event = evs.find(e => e.event === STEP_6);
       const completionEvent = evs.find(e => e.event === COMPLETED_CONTRATADO) || evs.find(e => e.event === COMPLETED_APROBADO);
-      const anchorEvent = step1Event || step6Event;
-      if (anchorEvent && completionEvent && anchorEvent.time && completionEvent.time) {
-        const diffMin = (completionEvent.time - anchorEvent.time) / 60000;
-        const anchorName = step1Event ? 'step_1' : 'step_6';
+      if (step1Event && step6Event && step1Event.time && step6Event.time) {
+        // caso normal: step_1 → step_6
+        const diffMin = (step6Event.time - step1Event.time) / 60000;
+        if (diffMin < STEP1_TO_STEP6_MIN_MIN) {
+          timingIssue = `Duración irreal: step_1→step_6 = ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
+        } else if (diffMin > STEP1_TO_STEP6_MAX_MIN) {
+          timingIssue = `Duración irreal: step_1→step_6 = ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
+        }
+      } else if (!step1Event && step6Event && completionEvent && step6Event.time && completionEvent.time) {
+        // sin step_1: medir step_6 → completion
+        const diffMin = (completionEvent.time - step6Event.time) / 60000;
         const completionName = completionEvent.event.split('-app_')[1] || completionEvent.event;
         if (diffMin < STEP1_TO_STEP6_MIN_MIN) {
-          timingIssue = `Duración irreal: ${anchorName}→${completionName} = ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
+          timingIssue = `Duración irreal: step_6→${completionName} = ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
         } else if (diffMin > STEP1_TO_STEP6_MAX_MIN) {
-          timingIssue = `Duración irreal: ${anchorName}→${completionName} = ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
+          timingIssue = `Duración irreal: step_6→${completionName} = ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
         }
       }
 
