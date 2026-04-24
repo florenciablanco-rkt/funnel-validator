@@ -189,7 +189,7 @@ tr:hover td{background:#faf9ff}
         · <strong>step_6</strong> obligatorio — <strong>completed_aprobado</strong> y/o <strong>completed_contratado</strong> al menos uno requerido<br>
         · <strong>País:</strong> solo registros con Country Code = CO son facturables<br>
         · <strong>Geografía:</strong> cambio de ciudad en menos de 10 min → geográficamente imposible → excluido<br>
-        · <strong>Duración del funnel:</strong> <em style="color:var(--rl-text-muted)">No aplicable con este CSV — requiere timeline completo con todos los partners (no solo Rocket)</em><br>
+        · <strong>Duración del funnel:</strong> si existe step_1 Rocket, el tiempo step_1→completion debe ser entre 8 y 60 min. Si no hay step_1 Rocket, no se aplica (el step_1 real está en otra fuente)<br>
         · <strong>Múltiples completaciones:</strong> más de 2 completaciones → descartado
       </div>
 
@@ -225,7 +225,7 @@ tr:hover td{background:#faf9ff}
             <button class="tab" onclick="setFilter('clean','status',this)">✅ Facturables</button>
             <button class="tab" onclick="setFilter('missing','status',this)">⚠ Pasos faltantes</button>
             <button class="tab" onclick="setFilter('geo','status',this)">📍 Alerta geo</button>
-            <!-- timing tab desactivado: regla requiere timeline completo -->
+            <button class="tab" onclick="setFilter('timing','status',this)">⏱ Timing inválido</button>
             <button class="tab" onclick="setFilter('dup','status',this)">🔁 Duplicados</button>
             <button class="tab" onclick="setFilter('excluded','status',this)">❌ Excluidos</button>
           </div>
@@ -665,13 +665,29 @@ function analyze(rows) {
       }
 
       // ── RULE 2: timing (duración del funnel) ──
-      // DESACTIVADA: el CSV estándar de AppsFlyer solo contiene eventos atribuidos a Rocket.
-      // El cliente mide "primer step_1 de cualquier fuente → completion rocket", por lo que
-      // necesita el timeline completo (todos los partners). Con solo eventos Rocket, el step_1
-      // que vemos es posterior al real, generando falsos rechazos por duración aparentemente corta.
-      // Para reactivar esta regla se necesita el export completo con Is Primary Attribution = todos.
+      // Regla del cliente:
+      //   - Si tiene step_1 Rocket: medir step_1 → completion. Rango válido: 8–60 min.
+      //   - Si NO tiene step_1 Rocket (N=0 en el CSV): no aplicar regla de duración.
+      //     Razón: el cliente usa el primer step_1 de CUALQUIER fuente. Si no hay step_1
+      //     Rocket, el step_1 real está en otra fuente (no visible en este CSV) y la
+      //     duración real desde ese step_1 externo es válida. Aplicar la regla con solo
+      //     step_6 generaría falsos rechazos.
       let timingIssue = '';
-      // const step1Event = ...; // desactivado — ver comentario arriba
+      const step1Event      = evs.find(e => e.event === STEP_1);
+      const step6Event      = evs.find(e => e.event === STEP_6);
+      const completionEvent = evs.find(e => e.event === COMPLETED_CONTRATADO) || evs.find(e => e.event === COMPLETED_APROBADO);
+
+      if (step1Event && completionEvent && step1Event.time && completionEvent.time) {
+        // Tiene step_1 Rocket → aplicar regla
+        const diffMin = (completionEvent.time - step1Event.time) / 60000;
+        const completionName = completionEvent.event.split('-app_')[1] || completionEvent.event;
+        if (diffMin < STEP1_TO_STEP6_MIN_MIN) {
+          timingIssue = `Duración irreal: step_1→${completionName} = ${diffMin.toFixed(1)} min (mín. ${STEP1_TO_STEP6_MIN_MIN} min)`;
+        } else if (diffMin > STEP1_TO_STEP6_MAX_MIN) {
+          timingIssue = `Duración irreal: step_1→${completionName} = ${diffMin.toFixed(1)} min (máx. ${STEP1_TO_STEP6_MAX_MIN} min)`;
+        }
+      }
+      // Si NO hay step_1 Rocket → no aplicar regla de duración (ver comentario arriba)
 
       // ── RULE 3: duplicados ──
       const completions        = evs.filter(e => e.event===COMPLETED_APROBADO||e.event===COMPLETED_CONTRATADO);
